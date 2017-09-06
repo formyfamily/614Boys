@@ -59,16 +59,6 @@ public class NewsProxy {
 
         // It's too complicated
 
-<<<<<<< HEAD
-    void setFilter(NewsFilter filter) {newsfilter = filter ;}
-    /* List<News> getNewsList() ; // 参数自己定，内部使用即可
-    News readNews(News) ;
-    News shareNews(News) ;
-    List<News> updateNews() ;
-    List<News> moreNews() ;*/
-=======
-        //System.out.println("getDisplayNews()");
-       // return (ArrayList<News>) newsAll.subList(0, displaySize);
     }
     private synchronized void addNewsOfPage(int page_) {
         System.out.println("addNewsOfPage " + page_ );
@@ -141,6 +131,5 @@ public class NewsProxy {
         }
         displaySize += num;
     }
->>>>>>> 90a8149e43244e9954a7289b6c240c9dc6319752
 }
 
