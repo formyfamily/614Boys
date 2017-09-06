@@ -9,7 +9,7 @@ import java.util.List;
 interface NewsFilter {
     boolean filter(News news) ; // return true if the news fits the condition.
 }
-
+/*
 public class ContentFilter implements NewsFilter {
 }
 public class TitleFilter implements NewsFilter {
@@ -19,3 +19,4 @@ public class ComplexFilter implements NewsFilter {
     List<NewsFilter> filters ;
 }
 
+*/
