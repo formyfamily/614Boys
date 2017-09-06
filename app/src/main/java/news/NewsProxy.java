@@ -1,20 +1,137 @@
 package news;
 
-import java.util.* ;
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.Menu;
+import android.widget.ImageView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
- * Created by kzf on 2017/9/5.
+ * Created by Administrator on 2017/9/5.
  */
 
 public class NewsProxy {
+    private static NewsProxy newsProxy;
+    private int size;
+    private int displaySize;
+    private ArrayList<News> newsAll;
+    private NewsProxy() {}
+    public static synchronized NewsProxy getInstance() {
+        if (newsProxy == null) {
+            newsProxy = new NewsProxy();
+            newsProxy.size = 500;
+            newsProxy.displaySize = 20;
+            newsProxy.update();
+            //newsProxy.tryUrl();
+        }
+        return newsProxy;
+    }
+    public int getDisplaySize() {
+        return  displaySize;
+    }
+    public void setDisplaySize(int displaySize) {
+        this.displaySize = displaySize;
+    }
+    public ArrayList<News> getDisplayNews() {
+        ArrayList<News> sublist = new ArrayList<News>();
+        for (int i = 0; i < displaySize; i++)
+            sublist.add(newsAll.get(i));
+        return sublist;
 
-    private NewsFilter newsfilter ;
-    private int patchSize ;
+        // It's too complicated
 
-    void setFilter(NewsFilter filter) {newsfilter = filter ;}
-    private List<News> getNewsList() ; // 参数自己定，内部使用即可
-    News readNews(News) ;
-    News shareNews(News) ;
-    List<News> updateNews() ;
-    List<News> moreNews() ;
+        //System.out.println("getDisplayNews()");
+       // return (ArrayList<News>) newsAll.subList(0, displaySize);
+    }
+    private synchronized void addNewsOfPage(int page_) {
+        System.out.println("addNewsOfPage " + page_ );
+        final int page = page_;
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    //System.out.println("begin get url");
+                    URL url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=500");
+                    //System.out.println("get url success");
+                    InputStream is = url.openStream();
+                    //System.out.println("get inputstream success");
+                    //BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuffer out = new StringBuffer();
+                    byte[] b = new byte[4096];
+                    for (int n; (n = is.read(b)) != -1;) {
+                        out.append(new String(b, 0, n));
+                    }
+                    String json = out.toString();
+                    //System.out.println("json : " + json);
+                    JSONObject jsonObject1 = new JSONObject(json);
+                    Log.e("Json", json);
+                    JSONArray jsonArray = jsonObject1.getJSONArray("list");
+                    //System.out.println("list length = " + jsonArray.length());
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                        newsAll.add(new News(jsonObject));
+                        //取出name
+                        //System.out.println(jsonObject);
+                    }
+                   // System.out.println("newsAll size = " + newsAll.size());
+                    for (News news : newsAll) {
+                        System.out.println(news);
+                    }
+                } catch (MalformedURLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        try {
+            thread.start();
+            thread.join();
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+    public void update() {
+        /**
+         update the newslist to the newest size news
+         */
+        Log.d("NewsProxy","update()!!!!");
+        if (newsAll != null)
+            newsAll.clear();
+        else newsAll = new ArrayList<News>();
+        for (int i = 0; i < size; i += 500) {
+            addNewsOfPage(i / 500 + 1);
+        }
+    }
+    public void moreNews(int num) {
+        while (displaySize + num > size) {
+            size += 500;
+            addNewsOfPage(size / 500);
+        }
+        displaySize += num;
+    }
 }
+
