@@ -110,13 +110,13 @@ public class News {
         return "News_toString()";
     }
     public boolean isRead() {
-        return false;
+        return NewsDatabase.getInstance().check(id);
     }
     public boolean isFavorite() {
-        return false;
+        return NewsDatabase.getInstance().isFavorite(id);
     }
-    public void setFavorite() {
-
+    public void setFavorite(boolean isFavorite_) {
+        NewsDatabase.getInstance().setFavorite(id, isFavorite_);
     }
 }
 /*
