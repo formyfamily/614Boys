@@ -1,6 +1,6 @@
-package assembly;
+package assembly.newsrecycle;
 
-import android.content.Intent;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
@@ -13,9 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 import activity.MainActivity;
-import activity.NewsActivity;
 import activity.R;
 import news.News;
 
@@ -34,13 +34,16 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static final int  FRESHING=1;
 
     private int load_more_status=0;
-    public ArrayList<News> datas = null;
-    public Resources resources = null ;
     private static final int TYPE_ITEM = 0;  //普通Item View
     private static final int TYPE_FOOTER = 1;  //底部FootView
     private static final int TYPE_REFRESHER = 2;  //顶部RefreshView
 
-    public NewsAdapter(ArrayList<News> datas) {
+    public Context mContext ;
+    public ArrayList<News> datas = null;
+    public Resources resources = null ;
+
+    public NewsAdapter(Context context, ArrayList<News> datas) {
+        this.mContext = context ;
         this.datas = datas;
     }
 
@@ -50,7 +53,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if(viewType==TYPE_ITEM)
         {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item,viewGroup,false);
-            ItemViewHolder itemViewHolder=new ItemViewHolder(view);
+            ItemViewHolder itemViewHolder=new ItemViewHolder(mContext, view);
             return itemViewHolder;
         }
         else if(viewType==TYPE_FOOTER)
@@ -132,8 +135,10 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public ImageView mSaveIcon;
         public TextView mItemInfo ;
         public LinearLayout newsItem ;
-        public ItemViewHolder(View view){
+        public Context mContext ;
+        public ItemViewHolder(Context context, View view){
             super(view);
+            mContext = context ;
             newsItem = (LinearLayout) view.findViewById(R.id.news_item) ;
             mTextView = (TextView) view.findViewById(R.id.item_text);
             mImageView = (ImageView) view.findViewById(R.id.item_image);
@@ -142,7 +147,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             newsItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.current_Activity.createNewNewsActivity(news) ;
+                    ((MainActivity)mContext).createNewNewsActivity(news) ;
                     Log.println(Log.INFO, "", "click_news_"+news.getTitle()) ;
                 }
             });

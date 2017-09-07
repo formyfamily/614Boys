@@ -17,7 +17,7 @@ import android.widget.TextView;
  */
 
 public class NewsActivity extends AppCompatActivity {
-    News news ;
+    NewsDetail newsDetail ;
     static CollapsingToolbarLayout collapsingToolbar ;
     static FloatingActionButton fab ;
 
@@ -25,9 +25,8 @@ public class NewsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-
-        news = (News)getIntent().getParcelableExtra("News") ;
-        if(news == null) {
+        newsDetail = NewsDetail.getNewsDetailById(this, getIntent().getStringExtra("News")) ;
+        if(newsDetail == null) {
             Log.println(Log.INFO, "", "Wrong! Null");
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.news_toolbar);
@@ -45,6 +44,6 @@ public class NewsActivity extends AppCompatActivity {
             }
         });
         TextView textView = (TextView)findViewById(R.id.news_text) ;
-        textView.setText(news.getTitle());
+        textView.setText(newsDetail.getTitle());
     }
 }

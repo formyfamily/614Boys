@@ -1,5 +1,6 @@
 package assembly.slidingtab;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -11,11 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-import android.widget.TextView;
 
 import activity.R;
 import assembly.DividerItemDecoration;
-import assembly.NewsAdapter;
+import assembly.newsrecycle.NewsAdapter;
 import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
 import news.NewsProxy;
 
@@ -24,12 +24,14 @@ import news.NewsProxy;
  */
 public class NewsFragment extends Fragment {
     private static final String DATA = "data";
+    static NewsProxy newsProxy = NewsProxy.getInstance();
+
     NewsAdapter smallAdapter;
     RecyclerView newsView;
     LinearLayoutManager layoutManager;
     SlideInRightAnimationAdapter newsAdapter;
     SwipeRefreshLayout newsRefresh;
-    static NewsProxy newsProxy = NewsProxy.getInstance();
+    Context mContext ;
     int lastVisibleItem = 0;
     int tagId;
 
@@ -38,7 +40,7 @@ public class NewsFragment extends Fragment {
         View view = inflater.inflate(R.layout.news_refresh_layout, container, false);
 
         lastVisibleItem = 0;
-        smallAdapter = new NewsAdapter(newsProxy.getDisplayNews());
+        smallAdapter = new NewsAdapter(mContext, newsProxy.getDisplayNews(tagId));
         smallAdapter.resources = getResources();
         newsView = (RecyclerView) view.findViewById(R.id.main_recyclerView);
         layoutManager = new LinearLayoutManager(inflater.getContext());
@@ -58,8 +60,8 @@ public class NewsFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        newsProxy.update();
-                        smallAdapter.datas = newsProxy.getDisplayNews();
+                        newsProxy.update(tagId);
+                        smallAdapter.datas = newsProxy.getDisplayNews(tagId);
                         newsAdapter = new SlideInRightAnimationAdapter(smallAdapter);
                         newsAdapter.setFirstOnly(true);
                         newsAdapter.setDuration(1000);
@@ -80,8 +82,8 @@ public class NewsFragment extends Fragment {
                         @Override
                         public void run() {
                             //newsProxy.setClassTagId(tagId);
-                            newsProxy.moreNews(20);
-                            smallAdapter.datas = newsProxy.getDisplayNews();
+                            newsProxy.moreNews(tagId) ;
+                            smallAdapter.datas = newsProxy.getDisplayNews(tagId);
                             smallAdapter.changeMoreStatus(NewsAdapter.PULLUP_LOAD_MORE);
                         }
                     }, 500);
@@ -104,9 +106,7 @@ public class NewsFragment extends Fragment {
 
     public void update() {
         if(smallAdapter == null) return ;
-        //newsProxy.setClassTagId(tagId);
-        //newsProxy.update();
-        smallAdapter.datas = newsProxy.getDisplayNews();
+        smallAdapter.datas = newsProxy.getDisplayNews(tagId);
         smallAdapter.notifyDataSetChanged();
         lastVisibleItem = 0;
         Log.println(Log.INFO, "", "New!" + ((Integer) tagId).toString());

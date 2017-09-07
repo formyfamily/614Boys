@@ -25,6 +25,7 @@ public class NewsPagerAdapter extends FragmentPagerAdapter {
         this.mContext = context;
         for(int i = 0; i < 12; i ++) {
             newsFragments[i] = new NewsFragment();
+            newsFragments[i].mContext = mContext ;
             newsFragments[i].tagId = i+1 ;
             newsFragments[i].update();
             if(i%4 == 0) selectedTags.add(i);

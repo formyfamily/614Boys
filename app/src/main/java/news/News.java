@@ -116,7 +116,6 @@ public class News implements Serializable {
     public boolean isRead() {
         return NewsDatabase.getInstance().check(id);
     }
-
     /*public boolean isFavorite() {
         return NewsDatabase.getInstance().isFavorite(id);
     }
@@ -124,8 +123,3 @@ public class News implements Serializable {
         NewsDatabase.getInstance().setFavorite(id, isFavorite_);
     }*/
 }
-/*
-public class NewsDetail extends News {
-
-}
-*/

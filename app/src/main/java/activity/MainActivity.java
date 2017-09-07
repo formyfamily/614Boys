@@ -1,6 +1,6 @@
 package activity;
 
-import assembly.NewsAdapter;
+import assembly.newsrecycle.NewsAdapter;
 import news.* ;
 
 import android.content.Intent;
@@ -18,19 +18,8 @@ import assembly.slidingtab.NewsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Static Members.
-    static NewsAdapter smallAdapter ;
-    static RecyclerView newsView ;
-    static LinearLayoutManager layoutManager ;
-    static SlideInRightAnimationAdapter newsAdapter ;
-    static SwipeRefreshLayout newsRefresh ;
-    static NewsProxy newsProxy = NewsProxy.getInstance() ;
-    static int lastVisibleItem = 0 ;
-    static public MainActivity current_Activity ;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        current_Activity = this ;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -56,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public void createNewNewsActivity(News news)
     {
         Intent intent = new Intent(MainActivity.this, NewsActivity.class) ;
-        intent.putExtra("News", news) ;
+        intent.putExtra("News", news.getId()) ;
         startActivity(intent);
     }
 

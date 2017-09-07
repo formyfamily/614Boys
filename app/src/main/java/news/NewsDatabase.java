@@ -1,5 +1,6 @@
 package news;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,22 +18,24 @@ public class NewsDatabase {
     private static NewsDatabase newsDatabase;
     private NewsDatabase() {}
     private String databasePath = "";
+    private Activity thisActivity;
     public static synchronized NewsDatabase getInstance() {
         if (newsDatabase == null) {
             newsDatabase = new NewsDatabase();
         }
         return newsDatabase;
     }
-    boolean check(String id) {
-        DatabaseHelper dbHelper = new DatabaseHelper(null,"local.db");
+    public void setThisActivity(Activity activity) { thisActivity = activity;}
+    public boolean check(String id) {
+        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
         SQLiteDatabase for_search = dbHelper.getReadableDatabase();
         String[] argList=new String[1];
         argList[0]=id;
-        Cursor cursor = for_search.query("newsHistory",new String[]{"id","classTagId","source","title"},"id=?",argList,null,null,null);
+        Cursor cursor = for_search.query("newsHistory",new String[]{"id"},"id=?",argList,null,null,null);
         if (cursor.moveToNext()) return(true);
         else return(false);
     }
-    NewsDetail getNewsDetailById(String id) {
+    public NewsDetail getNewsDetailById(String id) {
         if (!check(id))
             return null;
         NewsDetail newsDetail = new NewsDetail();
@@ -53,7 +56,7 @@ public class NewsDatabase {
         newsDetail.setUrl("");
         newsDetail.setVideo("");
         */
-        DatabaseHelper dbHelper = new DatabaseHelper(null, "local.db");
+        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] argList = new String[1];
         argList[0] = id;
@@ -85,7 +88,7 @@ public class NewsDatabase {
     }
     void saveNewsDetail(NewsDetail newsDetail) {
 
-        DatabaseHelper dbHelper = new DatabaseHelper(null, "local.db");
+        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
         String curId = newsDetail.getId();
         boolean alreadyExists = check(curId);
         if (alreadyExists) return;

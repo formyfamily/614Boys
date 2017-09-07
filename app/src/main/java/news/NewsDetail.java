@@ -1,5 +1,6 @@
 package news;
 
+import android.app.Activity;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -52,6 +53,7 @@ public class NewsDetail extends News {
             for (String pic : picses) {
                 pictures.add(pic);
             }// It's too complicated
+
             /*
             save pics to local and save paths to picturesLocal
              */
@@ -60,7 +62,8 @@ public class NewsDetail extends News {
             e.printStackTrace();
         }
     }
-    public static NewsDetail getNewsDetailById(final String id) {
+    public static NewsDetail getNewsDetailById(Activity thisActivity, final String id) {
+        NewsDatabase.getInstance().setThisActivity(thisActivity);
         if (NewsDatabase.getInstance().check(id)) {
             return NewsDatabase.getInstance().getNewsDetailById(id);
         } else { //grab it from internet and save it to datebase
@@ -96,6 +99,7 @@ public class NewsDetail extends News {
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
+            NewsDatabase.getInstance().setThisActivity(thisActivity);
             NewsDatabase.getInstance().saveNewsDetail(newsDetail);
             return newsDetail;
         }
