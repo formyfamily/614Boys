@@ -116,4 +116,35 @@ public class NewsDatabase {
         cv.put("video", newsDetail.getVideo());
         db.insert("newsHistory", null, cv);
     }
+
+    public boolean isFavorite(String id){
+        DatabaseHelper dbHelper = new DatabaseHelper(null, "local.db");
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] argList = new String[1];
+        argList[0] = id;
+        Cursor cursor = db.query("favorite", new String[]{"id","isfavorite"}, "id=?", argList, null, null, null);
+        if (cursor.moveToNext()) {
+            int result = cursor.getColumnIndex("isfavorite");
+            if (result==1) return(true);
+            else return(false);
+        }
+        return(false);
+    }
+
+    public void setFavorite(String id,boolean isfavorite_){
+        int isfavorite = 0;
+        if (isfavorite_) isfavorite = 1;
+        DatabaseHelper dbHelper = new DatabaseHelper(null, "local.db");
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String[] argList = new String[1];
+        argList[0] = id;
+        Cursor cursor = db.query("favorite", new String[]{"id","isfavorite"}, "id=?", argList, null, null, null);
+        ContentValues values = new ContentValues();
+        values.put("isfavorite",isfavorite);
+        if (cursor.moveToNext()){
+            db.update("favorite",values,"id=?",argList);
+        }
+        values.put("id",id);
+        db.insert("favorite",null,values);
+    }
 }
