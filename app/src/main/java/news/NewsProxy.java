@@ -33,6 +33,7 @@ public class NewsProxy {
     private static NewsProxy newsProxy;
     private int size;
     private int displaySize;
+    private int classTagId;
     private ArrayList<News> newsAll;
     private NewsProxy() {}
     public static synchronized NewsProxy getInstance() {
@@ -40,6 +41,7 @@ public class NewsProxy {
             newsProxy = new NewsProxy();
             newsProxy.size = 500;
             newsProxy.displaySize = 20;
+            newsProxy.displaySize = 0;
             newsProxy.update();
             //newsProxy.tryUrl();
         }
@@ -50,6 +52,11 @@ public class NewsProxy {
     }
     public void setDisplaySize(int displaySize) {
         this.displaySize = displaySize;
+    }
+    public int getClassTagId() { return classTagId;}
+    public void setClassTagId(int classTagId_) {
+        classTagId = classTagId_;
+        update();
     }
     public ArrayList<News> getDisplayNews() {
         ArrayList<News> sublist = new ArrayList<News>();
@@ -67,7 +74,10 @@ public class NewsProxy {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=500");
+                    URL url;
+                    if (classTagId == 0)
+                        url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=500");
+                    else url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=500" + "&category=" + classTagId);
                     InputStream is = url.openStream();
                     StringBuffer out = new StringBuffer();
                     byte[] b = new byte[4096];
