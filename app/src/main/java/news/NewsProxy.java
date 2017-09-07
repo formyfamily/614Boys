@@ -107,6 +107,8 @@ public class NewsProxy {
         if (newsAll != null)
             newsAll.clear();
         else newsAll = new ArrayList<News>();
+        size = 500;
+        displaySize = 20;
         for (int i = 0; i < size; i += 500) {
             addNewsOfPage(i / 500 + 1);
         }

@@ -22,9 +22,11 @@ public class MainActivity extends AppCompatActivity {
     // Static Members.
     static NewsAdapter smallAdapter ;
     static RecyclerView newsView ;
+    static LinearLayoutManager layoutManager ;
     static SlideInRightAnimationAdapter newsAdapter ;
     static SwipeRefreshLayout newsRefresh ;
     static NewsProxy newsProxy = NewsProxy.getInstance() ;
+    static int lastVisibleItem = 0 ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
         smallAdapter.resources = getResources() ;
 
         newsView = (RecyclerView)findViewById(R.id.main_recyclerView) ;
-        newsView.setLayoutManager(new LinearLayoutManager(this));
+        layoutManager = new LinearLayoutManager(this) ;
+        newsView.setLayoutManager(layoutManager);
         newsView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST)) ;
 
         newsAdapter =  new SlideInRightAnimationAdapter(smallAdapter);
@@ -64,6 +67,29 @@ public class MainActivity extends AppCompatActivity {
                         newsRefresh.setRefreshing(false);
                     }
                 }, 500);
+            }
+        });
+        newsView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState ==RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == smallAdapter.getItemCount()) {
+                    smallAdapter.changeMoreStatus(NewsAdapter.LOADING_MORE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            newsProxy.moreNews(20) ;
+                            smallAdapter.datas = newsProxy.getDisplayNews() ;
+                            smallAdapter.changeMoreStatus(NewsAdapter.PULLUP_LOAD_MORE);
+                        }
+                    }, 500);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView,dx, dy);
+                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
             }
         });
 
