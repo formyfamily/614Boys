@@ -1,17 +1,21 @@
 package assembly;
 
-import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import activity.MainActivity;
+import activity.NewsActivity;
 import activity.R;
 import news.News;
 
@@ -51,7 +55,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
         else if(viewType==TYPE_FOOTER)
         {
-            View foot_view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.footerview,viewGroup,false);
+            View foot_view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.footer_view,viewGroup,false);
             FootViewHolder footViewHolder=new FootViewHolder(foot_view);
             return footViewHolder;
         }
@@ -68,11 +72,11 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if(viewHolder instanceof NewsAdapter.ItemViewHolder)
         {
             ItemViewHolder ivh = (ItemViewHolder)viewHolder ;
-            News news = datas.get(position) ;
-            ivh.mTextView.setText(news.getTitle());
+            ivh.news = datas.get(position) ;
+            ivh.mTextView.setText(ivh.news.getTitle());
             ivh.mImageView.setImageBitmap(BitmapFactory.decodeResource(resources, R.mipmap.search_icon2));
-            String dateString = news.getTime() ;
-            ivh.mItemInfo.setText(dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8)) ;
+            String dateString = ivh.news.getTime() ;
+            ivh.mItemInfo.setText(ivh.news.getSource()+"    "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8)) ;
             if (position % 2 == 0) {
                 ivh.mTextView.setTextColor(resources.getColor(R.color.colorUnreaded));
                 ivh.mSaveIcon.setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.star));
@@ -122,17 +126,26 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        public News news ;
         public TextView mTextView;
         public ImageView mImageView;
         public ImageView mSaveIcon;
         public TextView mItemInfo ;
-
+        public LinearLayout newsItem ;
         public ItemViewHolder(View view){
             super(view);
-            mTextView = (TextView) view.findViewById(R.id.itemText);
-            mImageView = (ImageView) view.findViewById(R.id.itemImage);
-            mSaveIcon = (ImageView) view.findViewById(R.id.itemStarIcon);
-            mItemInfo = (TextView) view.findViewById(R.id.itemInfo) ;
+            newsItem = (LinearLayout) view.findViewById(R.id.news_item) ;
+            mTextView = (TextView) view.findViewById(R.id.item_text);
+            mImageView = (ImageView) view.findViewById(R.id.item_image);
+            mSaveIcon = (ImageView) view.findViewById(R.id.item_star_icon);
+            mItemInfo = (TextView) view.findViewById(R.id.item_info) ;
+            newsItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity.current_Activity.createNewNewsActivity(news) ;
+                    Log.println(Log.INFO, "", "click_news_"+news.getTitle()) ;
+                }
+            });
         }
     }
     public static class FootViewHolder extends  RecyclerView.ViewHolder{
@@ -140,13 +153,6 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public FootViewHolder(View view) {
             super(view);
             footerText=(TextView)view.findViewById(R.id.footer_text);
-        }
-    }
-    public static class RefreshViewHolder extends  RecyclerView.ViewHolder{
-        private TextView refreshText;
-        public RefreshViewHolder(View view) {
-            super(view);
-            refreshText=(TextView)view.findViewById(R.id.refresh_text);
         }
     }
 }
