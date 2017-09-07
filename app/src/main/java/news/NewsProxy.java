@@ -33,17 +33,17 @@ public class NewsProxy {
     private static NewsProxy newsProxy;
     private int size;
     private int displaySize;
-    private int classTagId;
-    private ArrayList<News> newsAll;
+    private static final int perLoadNum = 100;
+    private static final int perDisplayNum = 20;
+    private ArrayList<News> newsAll[];
     private NewsProxy() {}
     public static synchronized NewsProxy getInstance() {
         if (newsProxy == null) {
             newsProxy = new NewsProxy();
-            newsProxy.size = 500;
+            newsProxy.size = perLoadNum;
             newsProxy.displaySize = 20;
-            newsProxy.displaySize = 0;
-            newsProxy.update();
-            //newsProxy.tryUrl();
+            for (int i = 0 ; i < 13; i++)
+                newsProxy.update(i);
         }
         return newsProxy;
     }
@@ -53,31 +53,27 @@ public class NewsProxy {
     public void setDisplaySize(int displaySize) {
         this.displaySize = displaySize;
     }
-    public int getClassTagId() { return classTagId;}
-    public void setClassTagId(int classTagId_) {
-        classTagId = classTagId_;
-        update();
-    }
-    public ArrayList<News> getDisplayNews() {
+    public ArrayList<News> getDisplayNews(int classTagId) {
         ArrayList<News> sublist = new ArrayList<News>();
         for (int i = 0; i < displaySize; i++)
-            sublist.add(newsAll.get(i));
+            sublist.add(newsAll[classTagId].get(i));
         return sublist;
 
         // It's too complicated
 
     }
-    private synchronized void addNewsOfPage(int page_) {
+    private synchronized void addNewsOfPage(int page_, int classTagId_) {
         System.out.println("addNewsOfPage " + page_ );
         final int page = page_;
+        final int classTagId = classTagId_;
         Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
                     URL url;
                     if (classTagId == 0)
-                        url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=500");
-                    else url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=500" + "&category=" + classTagId);
+                        url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum);
+                    else url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum + "&category=" + classTagId);
                     InputStream is = url.openStream();
                     StringBuffer out = new StringBuffer();
                     byte[] b = new byte[4096];
@@ -89,7 +85,7 @@ public class NewsProxy {
                     JSONArray jsonArray = jsonObject1.getJSONArray("list");
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                        newsAll.add(new News(jsonObject));
+                        newsAll[classTagId].add(new News(jsonObject));
                     }
                 } catch (MalformedURLException e) {
                     // TODO Auto-generated catch block
@@ -109,26 +105,26 @@ public class NewsProxy {
             e.printStackTrace();
         }
     }
-    public void update() {
+    public void update(int classTagId) {
         /**
          update the newslist to the newest size news
          */
         Log.d("NewsProxy","update()!!!!");
-        if (newsAll != null)
-            newsAll.clear();
-        else newsAll = new ArrayList<News>();
-        size = 500;
+        if (newsAll[classTagId] != null)
+            newsAll[classTagId].clear();
+        else newsAll[classTagId] = new ArrayList<News>();
+        size = perLoadNum;
         displaySize = 20;
-        for (int i = 0; i < size; i += 500) {
-            addNewsOfPage(i / 500 + 1);
+        for (int i = 0; i < size; i += perLoadNum) {
+            addNewsOfPage(i / perLoadNum + 1, classTagId);
         }
     }
-    public void moreNews(int num) {
-        while (displaySize + num > size) {
-            size += 500;
-            addNewsOfPage(size / 500);
+    public void moreNews(int classTagId) {
+        while (displaySize + perDisplayNum > size) {
+            size += perLoadNum;
+            addNewsOfPage(size / perLoadNum, classTagId);
         }
-        displaySize += num;
+        displaySize += perDisplayNum;
     }
 }
 

@@ -112,12 +112,6 @@ public class News {
     public boolean isRead() {
         return NewsDatabase.getInstance().check(id);
     }
-    public boolean isFavorite() {
-        return NewsDatabase.getInstance().isFavorite(id);
-    }
-    public void setFavorite(boolean isFavorite_) {
-        NewsDatabase.getInstance().setFavorite(id, isFavorite_);
-    }
 }
 /*
 public class NewsDetail extends News {
