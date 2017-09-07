@@ -1,4 +1,4 @@
-package activity;
+package assembly;
 
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
@@ -11,12 +11,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import activity.R;
 import news.News;
 
 /**
  * Created by kzf on 2017/9/6.
  */
-class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>
 {
     public ArrayList<News> datas = null;
     public Resources resources = null ;
