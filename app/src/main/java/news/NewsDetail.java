@@ -30,6 +30,36 @@ public class NewsDetail extends News {
     public void setJournal(String journal_) {journal = journal_;}
     public void setPicturesLocal(ArrayList<String> picturesLocal_) {picturesLocal = picturesLocal_;}
     NewsDetail() {}
+    public void setByJsonObject(JSONObject jsonObject) {
+        try {
+            setClassTag(jsonObject.getString("newsClassTag"));
+            setAuthor(jsonObject.getString("news_Author"));
+            setCategory(jsonObject.getString("news_Category"));
+            setContent(jsonObject.getString("news_Content"));
+            setId(jsonObject.getString("news_ID"));
+            setJournal(jsonObject.getString("news_Journal"));
+            setSource(jsonObject.getString("news_Source"));
+            setTime(jsonObject.getString("news_Time"));
+            setTitle(jsonObject.getString("news_Title"));
+            setUrl(jsonObject.getString("news_URL"));
+            if (jsonObject.getString("news_Video") == "")
+                setVideo(null);
+            else setVideo(jsonObject.getString("news_Video"));
+            String pics = jsonObject.getString("news_Pictures");
+            String[] picses = pics.split(";");
+            setPictures(new ArrayList<String>());
+            ArrayList<String> pictures = getPictures();
+            for (String pic : picses) {
+                pictures.add(pic);
+            }// It's too complicated
+            /*
+            save pics to local and save paths to picturesLocal
+             */
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     public static NewsDetail getNewsDetailById(final String id) {
         if (NewsDatabase.getInstance().check(id)) {
             return NewsDatabase.getInstance().getNewsDetailById(id);
@@ -48,7 +78,7 @@ public class NewsDetail extends News {
                         }
                         String json = out.toString();
                         JSONObject jsonObject = new JSONObject(json);
-
+                        newsDetail.setByJsonObject(jsonObject);
                     } catch (MalformedURLException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

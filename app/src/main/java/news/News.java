@@ -109,6 +109,15 @@ public class News {
         //out = out +
         return "News_toString()";
     }
+    public boolean isRead() {
+        return false;
+    }
+    public boolean isFavorite() {
+        return false;
+    }
+    public void setFavorite() {
+
+    }
 }
 /*
 public class NewsDetail extends News {
