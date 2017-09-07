@@ -25,14 +25,7 @@ public class News {
     private String video;
     private String intro;
     private static HashMap<String, Integer> classTagIdMap = null;
-    public String getClassTag() {return classTag;}
-    public int getClassTagId() {return classTagId;}
-    public String getId() {return id;}
-    public String getSource() {return source;}
-    public String getTime() {return time;}
-    public String getTitle() {return title;}
-
-    public News(JSONObject jsonObject){
+    private void classTagIdMapInit() {
         if (classTagIdMap == null) {
             classTagIdMap = new HashMap<String, Integer>();
             classTagIdMap.put("科技", 1);
@@ -48,6 +41,40 @@ public class News {
             classTagIdMap.put("健康", 11);
             classTagIdMap.put("娱乐", 12);
         }
+    }
+    public String getLangType() {return langType;}
+    public String getClassTag() {return classTag;}
+    public int getClassTagId() {return classTagId;}
+    public String getAuthor() {return author;}
+    public String getId() {return id;}
+    public ArrayList<String> getPictures() {return pictures;}
+    public String getSource() {return source;}
+    public String getTime() {return time;}
+    public String getTitle() {return title;}
+    public String getUrl() {return  url;}
+    public String getVideo() {return video;}
+    public String getIntro() {return intro;}
+    public void setLangType(final String langType_) {langType = langType_;}
+    public void setClassTag(final String classTag_) {
+        classTagIdMapInit();
+        classTag = classTag_;
+        if (classTagIdMap.containsKey(classTag))
+            classTagId = classTagIdMap.get(classTag);
+        else
+            classTagId = 0;
+    }
+    public void setAuthor(String author_) {author = author_;}
+    public void setId(String id_) {id = id_;}
+    public void setPictures(ArrayList<String> pictures_) {pictures = pictures_;}
+    public void setSource(String source_) {source = source_;}
+    public void setTime(String time_) {time = time_;}
+    public void setTitle(String title_) {title = title_;}
+    public void setUrl(String url_) {url = url_;}
+    public void setVideo(String video_) {video = video_;}
+    public void setIntro(String intro_) {intro = intro_;}
+    public News() {}
+    public News(JSONObject jsonObject){
+        classTagIdMapInit();
         try {
             langType = jsonObject.getString("lang_Type");
             classTag = jsonObject.getString("newsClassTag");

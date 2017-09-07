@@ -67,32 +67,19 @@ public class NewsProxy {
             @Override
             public void run() {
                 try {
-                    //System.out.println("begin get url");
                     URL url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=500");
-                    //System.out.println("get url success");
                     InputStream is = url.openStream();
-                    //System.out.println("get inputstream success");
-                    //BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                     StringBuffer out = new StringBuffer();
                     byte[] b = new byte[4096];
                     for (int n; (n = is.read(b)) != -1;) {
                         out.append(new String(b, 0, n));
                     }
                     String json = out.toString();
-                    //System.out.println("json : " + json);
                     JSONObject jsonObject1 = new JSONObject(json);
-                    Log.e("Json", json);
                     JSONArray jsonArray = jsonObject1.getJSONArray("list");
-                    //System.out.println("list length = " + jsonArray.length());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                         newsAll.add(new News(jsonObject));
-                        //取出name
-                        //System.out.println(jsonObject);
-                    }
-                   // System.out.println("newsAll size = " + newsAll.size());
-                    for (News news : newsAll) {
-                        System.out.println(news);
                     }
                 } catch (MalformedURLException e) {
                     // TODO Auto-generated catch block
