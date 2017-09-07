@@ -22,16 +22,14 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/srl"
+        android:id="@+id/news_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/main_recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="#ffff0000"
-            android:dividerHeight="40dp"/>
+            android:layout_height="match_parent"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
