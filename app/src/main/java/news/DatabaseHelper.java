@@ -7,6 +7,7 @@ package news;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by thinkpad on 2017/9/6.
@@ -23,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context, String name){
         super(context, name, null, VERSION);
     }
+    @Override
     public void onCreate(SQLiteDatabase db){
         System.out.println("Creating database");
         db.execSQL("create table if not exists newsHistory (id text primary key, category text, content text, journal text," +

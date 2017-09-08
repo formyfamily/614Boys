@@ -1,5 +1,9 @@
 package controller;
 
+import android.content.Context;
+
+import activity.MainActivity;
+import assembly.newsrecycle.NewsAdapter;
 import news.* ;
 /**
  * Created by kzf on 2017/9/7.
@@ -9,10 +13,11 @@ public class NewsReader {
     private NewsReader() {} ;
     private static NewsReader newsReader = new NewsReader() ;
 
-    NewsReader getInstance() {return newsReader ;}
-    void readNews(News news)
+    public static NewsReader getInstance() {return newsReader ;}
+    public void readNews(final News news, final Context mContext, final NewsAdapter newsAdapter)
     {
-
+        NewsDetail.getNewsDetailById(news.getId()) ;
+        newsAdapter.notifyDataSetChanged();
+        ((MainActivity)mContext).createNewNewsActivity(news) ;
     }
-
 }

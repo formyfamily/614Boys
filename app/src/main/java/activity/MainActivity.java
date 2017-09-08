@@ -21,6 +21,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        NewsDatabase.getInstance().setThisActivity(MainActivity.this);
+        NewsDetail.setThisActivity(MainActivity.this);
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

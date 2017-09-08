@@ -127,8 +127,7 @@ public class NewsDetail extends News {
             e.printStackTrace();
         }
     }
-    public static NewsDetail getNewsDetailById(final Activity thisActivity, final String id) {
-        NewsDatabase.getInstance().setThisActivity(thisActivity);
+    public static NewsDetail getNewsDetailById(final String id) {
         if (NewsDatabase.getInstance().check(id)) {
             return NewsDatabase.getInstance().getNewsDetailById(id);
         } else { //grab it from internet and save it to datebase
@@ -165,7 +164,6 @@ public class NewsDetail extends News {
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
-            NewsDatabase.getInstance().setThisActivity(thisActivity);
             NewsDatabase.getInstance().saveNewsDetail(newsDetail);
             return newsDetail;
         }
