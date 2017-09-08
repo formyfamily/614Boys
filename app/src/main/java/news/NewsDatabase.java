@@ -138,10 +138,11 @@ public class NewsDatabase {
         cv.put("url", newsDetail.getUrl());
         cv.put("video", newsDetail.getVideo());
         db.insert("newsHistory", null, cv);
+        db.close();
     }
 
     public boolean isFavorite(String id){
-        DatabaseHelper dbHelper = new DatabaseHelper(null, "local.db");
+        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] argList = new String[1];
         argList[0] = id;

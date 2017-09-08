@@ -1,8 +1,11 @@
 package activity;
 
+import controller.NewsFavourite;
 import news.* ;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -21,19 +24,28 @@ public class NewsActivity extends AppCompatActivity {
     static CollapsingToolbarLayout collapsingToolbar ;
     static FloatingActionButton fab ;
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-        newsDetail = NewsDetail.getNewsDetailById(this, getIntent().getStringExtra("News")) ;
+
+        newsDetail = NewsDetail.getNewsDetailById(getIntent().getStringExtra("News")) ;
         if(newsDetail == null) {
             Log.println(Log.INFO, "", "Wrong! Null");
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.news_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(getString(R.string.app_name));
+        collapsingToolbar.setTitle(newsDetail.getTitle());
 
         /*fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -43,7 +55,19 @@ public class NewsActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+        TextView titleView = (TextView)findViewById(R.id.news_title) ;
+        titleView.setText(newsDetail.getTitle());
         TextView textView = (TextView)findViewById(R.id.news_text) ;
         textView.setText(newsDetail.getContent());
+        TextView infoView = (TextView)findViewById(R.id.news_info) ;
+        infoView.setText(newsDetail.getSource()+"   "+newsDetail.getTime());
+
+        com.github.clans.fab.FloatingActionButton favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
+        favouriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewsFavourite.getInstance().favouriteNews(NewsActivity.this, newsDetail);
+            }
+        });
     }
 }

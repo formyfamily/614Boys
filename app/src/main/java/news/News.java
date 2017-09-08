@@ -116,10 +116,10 @@ public class News implements Serializable {
     public boolean isRead() {
         return NewsDatabase.getInstance().check(id);
     }
-    /*public boolean isFavorite() {
+    public boolean isFavorite() {
         return NewsDatabase.getInstance().isFavorite(id);
     }
     public void setFavorite(boolean isFavorite_) {
         NewsDatabase.getInstance().setFavorite(id, isFavorite_);
-    }*/
+    }
 }

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,7 +18,9 @@ import java.util.zip.Inflater;
 
 import activity.MainActivity;
 import activity.R;
+import controller.NewsReader;
 import news.News;
+import news.NewsDetail;
 
 /**
  * Created by kzf on 2017/9/6.
@@ -76,17 +79,16 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         {
             ItemViewHolder ivh = (ItemViewHolder)viewHolder ;
             ivh.news = datas.get(position) ;
+            ivh.newAdapter = this ;
             ivh.mTextView.setText(ivh.news.getTitle());
             ivh.mImageView.setImageBitmap(BitmapFactory.decodeResource(resources, R.mipmap.search_icon2));
             String dateString = ivh.news.getTime() ;
             ivh.mItemInfo.setText(ivh.news.getSource()+"    "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8)) ;
-            if (position % 2 == 0) {
-                ivh.mTextView.setTextColor(resources.getColor(R.color.colorUnreaded));
-                ivh.mSaveIcon.setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.star));
-            } else {
+            if(ivh.news.isRead())
                 ivh.mTextView.setTextColor(resources.getColor(R.color.colorReaded));
-                ivh.mSaveIcon.setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.filled_star2));
-            }
+            else
+                ivh.mTextView.setTextColor(resources.getColor(R.color.colorUnreaded));
+            ivh.mSaveIcon.setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.star));
         }
         else if(viewHolder instanceof NewsAdapter.FootViewHolder)
         {
@@ -136,6 +138,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public TextView mItemInfo ;
         public LinearLayout newsItem ;
         public Context mContext ;
+        public NewsAdapter newAdapter ;
         public ItemViewHolder(Context context, View view){
             super(view);
             mContext = context ;
@@ -147,7 +150,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             newsItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity)mContext).createNewNewsActivity(news) ;
+                    NewsReader.getInstance().readNews(news, mContext, newAdapter) ;
                     Log.println(Log.INFO, "", "click_news_"+news.getTitle()) ;
                 }
             });
