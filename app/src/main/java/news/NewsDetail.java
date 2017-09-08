@@ -1,6 +1,7 @@
 package news;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -10,12 +11,15 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2017/9/7.
@@ -42,12 +46,28 @@ public class NewsDetail extends News {
             setClassTag(jsonObject.getString("newsClassTag"));
             setAuthor(jsonObject.getString("news_Author"));
             setCategory(jsonObject.getString("news_Category"));
-            setContent(jsonObject.getString("news_Content"));
+            String content = jsonObject.getString("news_Content");
+            Pattern p = Pattern.compile("[。？！\\.\\?\\!…][\\s]+");
+            Matcher m = p.matcher(content);
+            int cnt = 0, cur = 0;
+            String newContent = new String();
+            while(m.find()) {
+                cnt++;
+                System.out.println("Match number " + cnt);
+                System.out.println("start(): " + m.start());
+                System.out.println("end(): " + m.end());
+                System.out.println("group(): " + m.group());
+                newContent = newContent + content.substring(cur, m.start()) + content.substring(m.start(),m.start() + 1) + "\n\n    ";
+                cur = m.end();
+            }
+            newContent = newContent + content.substring(cur, content.length()) + '\n';
+            setContent(newContent);
             setId(jsonObject.getString("news_ID"));
             setJournal(jsonObject.getString("news_Journal"));
             setSource(jsonObject.getString("news_Source"));
             setTime(jsonObject.getString("news_Time"));
             setTitle(jsonObject.getString("news_Title"));
+
             setUrl(jsonObject.getString("news_URL"));
             if (jsonObject.getString("news_Video") == "")
                 setVideo(null);
@@ -69,7 +89,7 @@ public class NewsDetail extends News {
                 final String id = getId();
                 Thread thread = new Thread(){
                     @Override
-                    public void run() {
+                    public void run() {                        // This thread is used to download pictures and add its local path to picturesLocal
                         // TODO Auto-generated method stub
                         try {
                             //创建一个url对象
@@ -106,9 +126,31 @@ public class NewsDetail extends News {
                             is.close();
                             fos.close();
                             getPicturesLocal().add(targetFile.getPath());
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
+                            try {
+                                File dataRoot = thisActivity.getFilesDir();
+                                File imageFolder = new File(dataRoot,"image");
+                                imageFolder.mkdirs();
+                                File imageNotFoundPicture = new File(imageFolder,"image-not-found.jpg");
+                                if (!imageNotFoundPicture.exists()){
+                                    InputStream is2 = thisActivity.getAssets().open("image-not-found.jpg");
+                                    byte[]buff2=new byte[1024];
+                                    int count2=0;
+                                    FileOutputStream fos2 = new FileOutputStream(imageNotFoundPicture);
+                                    while ((count2=is2.read(buff2))>0) {
+                                        fos2.write(buff2, 0, count2);
+                                    }
+                                    fos2.flush();
+                                    //关闭输入输出流
+                                    is2.close();
+                                    fos2.close();
+                                }
+                                getPicturesLocal().add(imageNotFoundPicture.getPath());
+                            }catch(Exception f){
+                                f.printStackTrace();
+                            }
                         }
                     }
                 };

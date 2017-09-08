@@ -59,6 +59,8 @@ public class NewsProxy {
     }
     public ArrayList<News> getDisplayNews(int classTagId) {
         ArrayList<News> sublist = new ArrayList<News>();
+        System.out.printf("displaysize[%d] = %d size[%d] = %d \n", classTagId ,displaySize[classTagId], classTagId, size[classTagId]);
+        System.out.printf("now size[%d] = %d \n", classTagId, newsAll[classTagId].size());
         for (int i = 0; i < displaySize[classTagId]; i++)
             sublist.add(newsAll[classTagId].get(i));
         return sublist;
@@ -109,7 +111,7 @@ public class NewsProxy {
             e.printStackTrace();
         }
     }
-    public void update(int classTagId) {
+    public synchronized void update(int classTagId) {
         /**
          update the newslist to the newest size news
          */
