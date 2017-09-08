@@ -12,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
+
 import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
 import assembly.slidingtab.SlidingTabLayout;
 import assembly.slidingtab.NewsPagerAdapter;
@@ -33,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setViewPager(viewPager);
+
+        // initialize voice configuration object, used for reading news aloud
+        SpeechUtility.createUtility(this, SpeechConstant.APPID +"=59b214cf");
 
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

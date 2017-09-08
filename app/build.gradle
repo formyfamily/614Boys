@@ -17,6 +17,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            //jni库的调用会到资源文件夹下libs里面找so文件
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
@@ -31,4 +37,5 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:2.2.7'
     compile 'com.github.clans:fab:1.6.4'
     testCompile 'junit:junit:4.12'
+    compile files('libs/Msr.jar')
 }
