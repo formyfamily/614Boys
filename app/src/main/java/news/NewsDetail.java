@@ -57,8 +57,10 @@ public class NewsDetail extends News {
                 System.out.println("start(): " + m.start());
                 System.out.println("end(): " + m.end());
                 System.out.println("group(): " + m.group());
-                newContent = newContent + content.substring(cur, m.start()) + content.substring(m.start(),m.start() + 1) + '\n';
+                newContent = newContent + content.substring(cur, m.start()) + content.substring(m.start(),m.start() + 1) + "\n\n    ";
+                cur = m.end();
             }
+            newContent = newContent + content.substring(cur, content.length()) + '\n';
             setContent(newContent);
             setId(jsonObject.getString("news_ID"));
             setJournal(jsonObject.getString("news_Journal"));
