@@ -3,7 +3,9 @@ package activity;
 import controller.NewsFavourite;
 import news.* ;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,7 @@ public class NewsActivity extends AppCompatActivity {
     static CollapsingToolbarLayout collapsingToolbar ;
     static FloatingActionButton fab ;
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

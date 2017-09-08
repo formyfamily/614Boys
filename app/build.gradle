@@ -45,6 +45,7 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:2.2.7'
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.bigkoo:svprogresshud:1.0.6'
+    compile 'com.miguelcatalan:materialsearchview:1.4.0'
     testCompile 'junit:junit:4.12'
     compile files('libs/Msc.jar')
     compile files('libs/ShareSDK-Wechat-Moments-3.0.2.jar')

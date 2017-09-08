@@ -13,9 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
 import assembly.slidingtab.SlidingTabLayout;
@@ -85,6 +88,30 @@ public class MainActivity extends AppCompatActivity {
 
 // 启动分享GUI
         oks.show(this);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);//指定Toolbar上的视图文件
+        MenuItem item = menu.findItem(R.id.action_search);
+        MaterialSearchView searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView.setMenuItem(item);
+        searchView.setCursorDrawable(R.drawable.custom_cursor);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {return false;}
+        });
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {}
+            @Override
+            public void onSearchViewClosed() {}
+        });
+        return true;
     }
 
     public void createNewNewsActivity(News news)
