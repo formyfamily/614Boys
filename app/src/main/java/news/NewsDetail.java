@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2017/9/7.
@@ -44,12 +46,26 @@ public class NewsDetail extends News {
             setClassTag(jsonObject.getString("newsClassTag"));
             setAuthor(jsonObject.getString("news_Author"));
             setCategory(jsonObject.getString("news_Category"));
-            setContent(jsonObject.getString("news_Content"));
+            String content = jsonObject.getString("news_Content");
+            Pattern p = Pattern.compile("[。？！\\.\\?\\!…][\\s]+");
+            Matcher m = p.matcher(content);
+            int cnt = 0, cur = 0;
+            String newContent = new String();
+            while(m.find()) {
+                cnt++;
+                System.out.println("Match number " + cnt);
+                System.out.println("start(): " + m.start());
+                System.out.println("end(): " + m.end());
+                System.out.println("group(): " + m.group());
+                newContent = newContent + content.substring(cur, m.start()) + content.substring(m.start(),m.start() + 1) + '\n';
+            }
+            setContent(newContent);
             setId(jsonObject.getString("news_ID"));
             setJournal(jsonObject.getString("news_Journal"));
             setSource(jsonObject.getString("news_Source"));
             setTime(jsonObject.getString("news_Time"));
             setTitle(jsonObject.getString("news_Title"));
+
             setUrl(jsonObject.getString("news_URL"));
             if (jsonObject.getString("news_Video") == "")
                 setVideo(null);
