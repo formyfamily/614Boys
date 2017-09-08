@@ -24,20 +24,21 @@ public class NewsDatabase {
     private static NewsDatabase newsDatabase;
     private NewsDatabase() {}
     private String databasePath = "";
+    private Activity thisActivity;
     private String splitStr=";,;";
-    //private Activity thisActivity;
     public static synchronized NewsDatabase getInstance() {
         if (newsDatabase == null) {
             newsDatabase = new NewsDatabase();
         }
         return newsDatabase;
     }
-    boolean check(String id) {
-        DatabaseHelper dbHelper = new DatabaseHelper(null,"local.db");
+    public void setThisActivity(Activity activity) { thisActivity = activity;}
+    public boolean check(String id) {
+        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
         SQLiteDatabase for_search = dbHelper.getReadableDatabase();
         String[] argList=new String[1];
         argList[0]=id;
-        Cursor cursor = for_search.query("newsHistory",new String[]{"id","classTagId","source","title"},"id=?",argList,null,null,null);
+        Cursor cursor = for_search.query("newsHistory",new String[]{"id"},"id=?",argList,null,null,null);
         if (cursor.moveToNext()) return(true);
         else return(false);
     }
@@ -62,7 +63,7 @@ public class NewsDatabase {
         newsDetail.setUrl("");
         newsDetail.setVideo("");
         */
-        DatabaseHelper dbHelper = new DatabaseHelper(null, "local.db");
+        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] argList = new String[1];
         argList[0] = id;
@@ -98,7 +99,7 @@ public class NewsDatabase {
     }
     public void saveNewsDetail(NewsDetail newsDetail) {
 
-        DatabaseHelper dbHelper = new DatabaseHelper(null, "local.db");
+        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
         String newsId = newsDetail.getId();
         boolean alreadyExists = check(newsId);
         if (alreadyExists) return;
@@ -109,13 +110,16 @@ public class NewsDatabase {
         cv.put("content", newsDetail.getContent());
         cv.put("journal", newsDetail.getJournal());
         ArrayList<String> picturesA = newsDetail.getPictures();
+        ArrayList<String> picturesB = newsDetail.getPicturesLocal();
         String picturesS = "";
         String picturesLocalS="";
         Iterator<String> it1 = picturesA.iterator();
+        Iterator<String> it2 = picturesB.iterator();
         while (it1.hasNext()){
             String currentURL = it1.next();
-            picturesS += currentURL+splitStr;
-            picturesLocalS += downloadPicture(currentURL, newsId)+splitStr;   // newsId is used to seperate images in different folders.
+            String currentURLLocal = it2.next();
+            picturesS += currentURL + splitStr;
+            picturesLocalS += currentURLLocal + splitStr;   // newsId is used to seperate images in different folders.
         }
         if (!picturesS.equals("")) {
             picturesS = picturesS.substring(0, picturesS.length() - 3);
@@ -166,7 +170,7 @@ public class NewsDatabase {
         values.put("id",id);
         db.insert("favorite",null,values);
     }
-
+/*
     private String downloadPicture(final String urlStr,final String id){
         new Thread(){
             @Override
@@ -191,7 +195,7 @@ public class NewsDatabase {
                     baos.close();
                     //打开手机文件对应的输出流
                     String imageName="bye.jpg";
-                    File curDir = mainActivity.getExternalFilesDir(null);
+                    File curDir = thisActivity.getExternalFilesDir(null);
                     File targetDir = new File(curDir, "image/"+id);
                     targetDir.mkdirs();
                     File targetFile = new File(targetDir,imageName);
@@ -214,4 +218,5 @@ public class NewsDatabase {
             }
         }.start();
     }
+    */
 }

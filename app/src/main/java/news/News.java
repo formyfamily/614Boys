@@ -4,14 +4,18 @@ package news;
  * Created by Administrator on 2017/9/5.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class News {
+public class News implements Serializable {
     private String langType;
     private String classTag;
     private int classTagId;
@@ -112,9 +116,10 @@ public class News {
     public boolean isRead() {
         return NewsDatabase.getInstance().check(id);
     }
+    /*public boolean isFavorite() {
+        return NewsDatabase.getInstance().isFavorite(id);
+    }
+    public void setFavorite(boolean isFavorite_) {
+        NewsDatabase.getInstance().setFavorite(id, isFavorite_);
+    }*/
 }
-/*
-public class NewsDetail extends News {
-
-}
-*/

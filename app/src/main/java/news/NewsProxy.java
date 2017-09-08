@@ -31,8 +31,8 @@ import org.json.JSONObject;
 
 public class NewsProxy {
     private static NewsProxy newsProxy;
-    private int size;
-    private int displaySize;
+    private int size[];
+    private int displaySize[];
     private static final int perLoadNum = 100;
     private static final int perDisplayNum = 20;
     private ArrayList<News> newsAll[];
@@ -40,22 +40,26 @@ public class NewsProxy {
     public static synchronized NewsProxy getInstance() {
         if (newsProxy == null) {
             newsProxy = new NewsProxy();
-            newsProxy.size = perLoadNum;
-            newsProxy.displaySize = 20;
-            for (int i = 0 ; i < 13; i++)
+            newsProxy.size = new int[13];
+            newsProxy.displaySize =  new int[13];
+            newsProxy.newsAll = new ArrayList[13];
+            for (int i = 0 ; i < 13; i++){
+                newsProxy.size[i] = perLoadNum;
+                newsProxy.displaySize[i] = perDisplayNum;
                 newsProxy.update(i);
+            }
         }
         return newsProxy;
     }
-    public int getDisplaySize() {
-        return  displaySize;
+    public int getDisplaySize(int classTagId) {
+        return  displaySize[classTagId];
     }
-    public void setDisplaySize(int displaySize) {
-        this.displaySize = displaySize;
+    public void setDisplaySize(int classTagId, int displaySize) {
+        this.displaySize[classTagId] = displaySize;
     }
     public ArrayList<News> getDisplayNews(int classTagId) {
         ArrayList<News> sublist = new ArrayList<News>();
-        for (int i = 0; i < displaySize; i++)
+        for (int i = 0; i < displaySize[classTagId]; i++)
             sublist.add(newsAll[classTagId].get(i));
         return sublist;
 
@@ -113,18 +117,18 @@ public class NewsProxy {
         if (newsAll[classTagId] != null)
             newsAll[classTagId].clear();
         else newsAll[classTagId] = new ArrayList<News>();
-        size = perLoadNum;
-        displaySize = 20;
-        for (int i = 0; i < size; i += perLoadNum) {
+        size[classTagId] = perLoadNum;
+        displaySize[classTagId] = 20;
+        for (int i = 0; i < size[classTagId]; i += perLoadNum) {
             addNewsOfPage(i / perLoadNum + 1, classTagId);
         }
     }
     public void moreNews(int classTagId) {
-        while (displaySize + perDisplayNum > size) {
-            size += perLoadNum;
-            addNewsOfPage(size / perLoadNum, classTagId);
+        while (displaySize[classTagId] + perDisplayNum > size[classTagId]) {
+            size[classTagId] += perLoadNum;
+            addNewsOfPage(size[classTagId] / perLoadNum, classTagId);
         }
-        displaySize += perDisplayNum;
+        displaySize[classTagId] += perDisplayNum;
     }
 }
 
