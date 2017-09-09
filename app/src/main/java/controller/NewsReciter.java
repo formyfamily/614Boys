@@ -26,6 +26,8 @@ public class NewsReciter {
 
     private SpeechSynthesizer mySynthesizer;
 
+    public boolean hasStarted = false;
+
     private NewsReciter() {
     }
     
@@ -96,5 +98,9 @@ public class NewsReciter {
 
             }
         });
+    }
+
+    public void stopSpeaking() {
+        mySynthesizer.pauseSpeaking();
     }
 }

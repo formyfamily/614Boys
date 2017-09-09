@@ -71,11 +71,20 @@ public class NewsActivity extends AppCompatActivity {
             }
         });
 
-        com.github.clans.fab.FloatingActionButton reciteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_voice) ;
+        final com.github.clans.fab.FloatingActionButton reciteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_voice) ;
         reciteButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                NewsReciter.getInstance().speakText(newsDetail.getTitle()+'\n'+newsDetail.getContent());
+            public void onClick(View v)  {
+                NewsReciter reciter1 = NewsReciter.getInstance();
+                if (reciter1.hasStarted) {
+                    reciter1.stopSpeaking();
+                    reciteButton.setLabelText("语音播放");
+                }
+                else {
+                    reciter1.speakText(newsDetail.getTitle()+'\n'+newsDetail.getContent());
+                    reciteButton.setLabelText("停止播放");
+                }
+                reciter1.hasStarted = !reciter1.hasStarted;
             }
         });
     }
