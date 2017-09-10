@@ -22,8 +22,8 @@ import android.widget.TextView;
 
 public class NewsActivity extends AppCompatActivity {
     NewsDetail newsDetail ;
-    static CollapsingToolbarLayout collapsingToolbar ;
-    static FloatingActionButton fab ;
+    CollapsingToolbarLayout collapsingToolbar ;
+    com.github.clans.fab.FloatingActionButton favouriteButton ;
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -61,13 +61,16 @@ public class NewsActivity extends AppCompatActivity {
         TextView textView = (TextView)findViewById(R.id.news_text) ;
         textView.setText(newsDetail.getContent());
         TextView infoView = (TextView)findViewById(R.id.news_info) ;
-        infoView.setText(newsDetail.getSource()+"   "+newsDetail.getTime());
+        String dateString = newsDetail.getTime() ;
+        infoView.setText(newsDetail.getSource()+"   "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8));
 
-        com.github.clans.fab.FloatingActionButton favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
+        favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
+        setFavouriteButtonState(newsDetail.isFavorite());
         favouriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NewsFavourite.getInstance().favouriteNews(NewsActivity.this, newsDetail);
+                setFavouriteButtonState(newsDetail.isFavorite());
             }
         });
 
@@ -87,5 +90,18 @@ public class NewsActivity extends AppCompatActivity {
                 reciter1.hasStarted = !reciter1.hasStarted;
             }
         });
+    }
+    void setFavouriteButtonState(boolean is_favourite)
+    {
+        if(!is_favourite) {
+            favouriteButton.setLabelText("收藏新闻");
+            favouriteButton.setColorNormal(getResources().getColor(R.color.colorFavourite));
+            favouriteButton.setColorPressed(getResources().getColor(R.color.colorFavoriteLight));
+        }
+        else {
+            favouriteButton.setLabelText("取消收藏");
+            favouriteButton.setColorNormal(getResources().getColor(R.color.colorFavourite));
+            favouriteButton.setColorPressed(getResources().getColor(R.color.colorFavoriteLight));
+        }
     }
 }

@@ -50,7 +50,7 @@
                 android:id="@+id/tab_set_button"
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:background="#eeeeee"
+                android:background="@color/colorPrimaryLight"
                 android:layout_gravity="center"
                 android:src="@android:drawable/ic_menu_add"
                 >

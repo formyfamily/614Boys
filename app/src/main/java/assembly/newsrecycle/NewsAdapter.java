@@ -46,7 +46,6 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.datas = datas;
     }
 
-    //创建新View，被LayoutManager所调用
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         if(viewType==TYPE_ITEM)
@@ -61,9 +60,6 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             FootViewHolder footViewHolder=new FootViewHolder(foot_view);
             return footViewHolder;
         }
-        //else if(viewType==TYPE_REFRESHER)
-        //{
-        //}
         return null ;
     }
 
@@ -84,7 +80,10 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 ivh.mTextView.setTextColor(resources.getColor(R.color.colorReaded));
             else
                 ivh.mTextView.setTextColor(resources.getColor(R.color.colorUnreaded));
-            ivh.mSaveIcon.setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.star));
+            ivh.mFavouriteIcon.setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.filled_star2));
+            if(ivh.news.isFavorite())
+                ivh.mFavouriteIcon.setAlpha(200);
+            else ivh.mFavouriteIcon.setAlpha(0);
         }
         else if(viewHolder instanceof NewsAdapter.FootViewHolder)
         {
@@ -130,7 +129,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public News news ;
         public TextView mTextView;
         public ImageView mImageView;
-        public ImageView mSaveIcon;
+        public ImageView mFavouriteIcon;
         public TextView mItemInfo ;
         public LinearLayout newsItem ;
         public Context mContext ;
@@ -141,7 +140,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             newsItem = (LinearLayout) view.findViewById(R.id.news_item) ;
             mTextView = (TextView) view.findViewById(R.id.item_text);
             mImageView = (ImageView) view.findViewById(R.id.item_image);
-            mSaveIcon = (ImageView) view.findViewById(R.id.item_star_icon);
+            mFavouriteIcon = (ImageView) view.findViewById(R.id.item_favourite_icon);
             mItemInfo = (TextView) view.findViewById(R.id.item_info) ;
             newsItem.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
 // 启动分享GUI
         oks.show(this);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_menu, menu);//指定Toolbar上的视图文件
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         //showShare(news);
         Intent intent = new Intent(MainActivity.this, NewsActivity.class) ;
         intent.putExtra("News", news.getId()) ;
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     @Override
@@ -162,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setAdapter(newsPagerAdapter);
             slidingTabLayout.setViewPager(viewPager);
         }
-
+        else if(requestCode == 1) {
+            newsPagerAdapter.update();
+        }
     }
 }
