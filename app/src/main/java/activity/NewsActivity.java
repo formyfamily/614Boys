@@ -2,6 +2,7 @@ package activity;
 
 import controller.NewsFavourite;
 import controller.NewsReciter;
+import controller.NewsRecommender;
 import news.* ;
 import android.app.Activity;
 import android.os.Build;
@@ -15,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 /**
  * Created by kzf on 2017/9/6.
@@ -85,6 +88,14 @@ public class NewsActivity extends AppCompatActivity {
                     reciteButton.setLabelText("停止播放");
                 }
                 reciter1.hasStarted = !reciter1.hasStarted;
+            }
+        });
+
+        com.github.clans.fab.FloatingActionButton shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> keywords = new NewsRecommender().getRecommendedWords();
             }
         });
     }

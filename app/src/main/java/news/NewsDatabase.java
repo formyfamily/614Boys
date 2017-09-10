@@ -12,7 +12,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import activity.MainActivity;
 
@@ -165,6 +167,29 @@ public class NewsDatabase {
         }
         values.put("id",id);
         db.insert("favorite",null,values);
+    }
+
+    public void saveNewsNLP(NewsNLP newsNLP) {
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
+        HashMap<String,Double> scores = newsNLP.getScores();
+        Iterator<HashMap.Entry<String,Double>> it = scores.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String,Double> thisEntry = it.next();
+            String word = thisEntry.getKey();
+            double score = thisEntry.getValue();
+            Cursor cursor = db.query("NLP",new String[]{"word","score"},"word=?",new String[]{word},null,null,null);
+            if (cursor.moveToNext()) {
+                ContentValues values = new ContentValues();
+                values.put("score",cursor.getDouble(cursor.getColumnIndex("score"))+score);
+                db.update("NLP",values,"word=?",new String[]{word});
+            }
+            else {
+                ContentValues values = new ContentValues();
+                values.put("word",word);
+                values.put("score",score);
+                db.insert("NLP",null,values);
+            }
+        }
     }
 /*
     private String downloadPicture(final String urlStr,final String id){

@@ -46,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "picturesLocal text, pictures text, author text, langType text, classTag text, intro text, source text," +
                 "time text, title text, url text, video text)");
         db.execSQL("create table if not exists favorite (id text primary key, isfavorite int)");
+        db.execSQL("create table if not exists NLP (word text primary key, score double)");
 
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){

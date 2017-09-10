@@ -35,15 +35,17 @@ public class NewsProxy {
     private int displaySize[];
     private static final int perLoadNum = 100;
     private static final int perDisplayNum = 20;
+    private static final int newsProxyNum = 26;          // 13-25 used for searching
     private ArrayList<News> newsAll[];
+    private String keywords="";               // used for searching and recommendation
     private NewsProxy() {}
     public static synchronized NewsProxy getInstance() {
         if (newsProxy == null) {
             newsProxy = new NewsProxy();
-            newsProxy.size = new int[13];
-            newsProxy.displaySize =  new int[13];
-            newsProxy.newsAll = new ArrayList[13];
-            for (int i = 0 ; i < 13; i++){
+            newsProxy.size = new int[newsProxyNum];
+            newsProxy.displaySize =  new int[newsProxyNum];
+            newsProxy.newsAll = new ArrayList[newsProxyNum];
+            for (int i = 0 ; i < newsProxyNum; i++){
                 newsProxy.size[i] = perLoadNum;
                 newsProxy.displaySize[i] = perDisplayNum;
                 newsProxy.update(i);
@@ -77,9 +79,19 @@ public class NewsProxy {
             public void run() {
                 try {
                     URL url;
-                    if (classTagId == 0)
-                        url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum);
-                    else url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum + "&category=" + classTagId);
+                    if (keywords.equals("")) {
+                        if (classTagId == 0)
+                            url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum);
+                        else
+                            url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum + "&category=" + classTagId);
+                    }
+                    else{
+                        if (classTagId == 0)
+                            url = new URL("http://166.111.68.66:2042/news/action/query/search?keywords=" +
+                                    keywords + "&pageNo=" + page + "&pageSize=" + perLoadNum);
+                        else url = new URL("http://166.111.68.66:2042/news/action/query/search?keywords=" +
+                                keywords + "&pageNo=" + page + "&pageSize=" + perLoadNum+"&category="+classTagId);
+                    }
                     InputStream is = url.openStream();
                     StringBuffer out = new StringBuffer();
                     byte[] b = new byte[4096];
@@ -116,21 +128,31 @@ public class NewsProxy {
          update the newslist to the newest size news
          */
         Log.d("NewsProxy","update()!!!!");
-        if (newsAll[classTagId] != null)
-            newsAll[classTagId].clear();
-        else newsAll[classTagId] = new ArrayList<News>();
-        size[classTagId] = perLoadNum;
-        displaySize[classTagId] = 20;
-        for (int i = 0; i < size[classTagId]; i += perLoadNum) {
+        int proxyIndex = classTagId;
+        if (!keywords.equals("")) proxyIndex += 13;
+        if (newsAll[proxyIndex] != null)
+            newsAll[proxyIndex].clear();
+        else newsAll[proxyIndex] = new ArrayList<News>();
+        size[proxyIndex] = perLoadNum;
+        displaySize[proxyIndex] = 20;
+        for (int i = 0; i < size[proxyIndex]; i += perLoadNum) {
             addNewsOfPage(i / perLoadNum + 1, classTagId);
         }
     }
     public void moreNews(int classTagId) {
-        while (displaySize[classTagId] + perDisplayNum > size[classTagId]) {
-            size[classTagId] += perLoadNum;
-            addNewsOfPage(size[classTagId] / perLoadNum, classTagId);
+        int proxyIndex = classTagId;
+        if (!keywords.equals("")) proxyIndex += 13;
+        while (displaySize[proxyIndex] + perDisplayNum > size[proxyIndex]) {
+            size[proxyIndex] += perLoadNum;
+            addNewsOfPage(size[proxyIndex] / perLoadNum, classTagId);
         }
-        displaySize[classTagId] += perDisplayNum;
+        displaySize[proxyIndex] += perDisplayNum;
+    }
+    public String getKeywords() {
+        return(keywords);
+    }
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
     }
 }
 
