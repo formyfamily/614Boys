@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         NewsDatabase.getInstance().setThisActivity(MainActivity.this);
+        DatabaseHelper.init(this);
         NewsDetail.setThisActivity(MainActivity.this);
         // initialize voice configuration object, used for reading news aloud
         SpeechUtility.createUtility(this, SpeechConstant.APPID +"=59b214cf");

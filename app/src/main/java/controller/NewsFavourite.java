@@ -21,6 +21,9 @@ public class NewsFavourite {
         if(news.isFavorite()) {
             news.setFavorite(false);
         }
+        else {
+            news.setFavorite(true);
+        }
         new SVProgressHUD(mContext).showInfoWithStatus("这是提示");
     }
 }

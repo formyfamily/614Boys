@@ -1,6 +1,7 @@
 package activity;
 
 import controller.NewsFavourite;
+import controller.NewsReciter;
 import news.* ;
 import android.app.Activity;
 import android.os.Build;
@@ -67,6 +68,23 @@ public class NewsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 NewsFavourite.getInstance().favouriteNews(NewsActivity.this, newsDetail);
+            }
+        });
+
+        final com.github.clans.fab.FloatingActionButton reciteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_voice) ;
+        reciteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)  {
+                NewsReciter reciter1 = NewsReciter.getInstance();
+                if (reciter1.hasStarted) {
+                    reciter1.stopSpeaking();
+                    reciteButton.setLabelText("语音播放");
+                }
+                else {
+                    reciter1.speakText(newsDetail.getTitle()+'\n'+newsDetail.getContent());
+                    reciteButton.setLabelText("停止播放");
+                }
+                reciter1.hasStarted = !reciter1.hasStarted;
             }
         });
     }

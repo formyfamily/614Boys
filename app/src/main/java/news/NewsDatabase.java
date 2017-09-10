@@ -34,8 +34,7 @@ public class NewsDatabase {
     }
     public void setThisActivity(Activity activity) { thisActivity = activity;}
     public boolean check(String id) {
-        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
-        SQLiteDatabase for_search = dbHelper.getReadableDatabase();
+        SQLiteDatabase for_search = DatabaseHelper.getDbHelper().getReadableDatabase();
         String[] argList=new String[1];
         argList[0]=id;
         Cursor cursor = for_search.query("newsHistory",new String[]{"id"},"id=?",argList,null,null,null);
@@ -63,8 +62,7 @@ public class NewsDatabase {
         newsDetail.setUrl("");
         newsDetail.setVideo("");
         */
-        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getReadableDatabase();
         String[] argList = new String[1];
         argList[0] = id;
         Cursor cursor = db.query("newsHistory", new String[]{"id","category","content","journal","picturesLocal",
@@ -86,7 +84,7 @@ public class NewsDatabase {
             newsDetail.setAuthor(cursor.getString(cursor.getColumnIndex("author")));
             newsDetail.setLangType(cursor.getString(cursor.getColumnIndex("langType")));
             newsDetail.setClassTag(cursor.getString(cursor.getColumnIndex("classTag")));
-            //newsDetail.set id(cursor.getString(cursor.getColumnIndex("")));
+            newsDetail.setId(id);
             newsDetail.setIntro(cursor.getString(cursor.getColumnIndex("intro")));
             newsDetail.setSource(cursor.getString(cursor.getColumnIndex("source")));
             newsDetail.setTime(cursor.getString(cursor.getColumnIndex("time")));
@@ -99,11 +97,10 @@ public class NewsDatabase {
     }
     public void saveNewsDetail(NewsDetail newsDetail) {
 
-        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
         String newsId = newsDetail.getId();
         boolean alreadyExists = check(newsId);
         if (alreadyExists) return;
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
 
         ContentValues cv = new ContentValues();
         cv.put("category", newsDetail.getCategory());
@@ -142,8 +139,7 @@ public class NewsDatabase {
     }
 
     public boolean isFavorite(String id){
-        DatabaseHelper dbHelper = new DatabaseHelper(thisActivity, "local.db");
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getReadableDatabase();
         String[] argList = new String[1];
         argList[0] = id;
         Cursor cursor = db.query("favorite", new String[]{"id","isfavorite"}, "id=?", argList, null, null, null);
@@ -158,8 +154,7 @@ public class NewsDatabase {
     public void setFavorite(String id,boolean isfavorite_){
         int isfavorite = 0;
         if (isfavorite_) isfavorite = 1;
-        DatabaseHelper dbHelper = new DatabaseHelper(null, "local.db");
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
         String[] argList = new String[1];
         argList[0] = id;
         Cursor cursor = db.query("favorite", new String[]{"id","isfavorite"}, "id=?", argList, null, null, null);
