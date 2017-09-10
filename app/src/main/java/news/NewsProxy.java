@@ -33,7 +33,7 @@ public class NewsProxy {
     private static NewsProxy newsProxy;
     private int size[];
     private int displaySize[];
-    private static final int perLoadNum = 100;
+    private static final int perLoadNum = 20;
     private static final int perDisplayNum = 20;
     private ArrayList<News> newsAll[];
     private NewsProxy() {}

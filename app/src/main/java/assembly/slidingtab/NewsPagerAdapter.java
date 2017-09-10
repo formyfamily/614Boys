@@ -5,36 +5,57 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import news.News;
+
 /**
  * @author fyales
  */
-public class NewsPagerAdapter extends FragmentPagerAdapter {
+public class NewsPagerAdapter extends FragmentPagerAdapter{
 
 
-    private String mTabTitle[] = new String[]{"科技", "教育", "军事", "国内", "社会", "文化", "汽车", "国际", "体育", "财经", "健康", "娱乐"};
-    static NewsFragment newsFragments[] = new NewsFragment[12] ;
+    private String mTabTitle[] = News.classIdTagArray ;
+    static NewsFragment newsFragments[] = new NewsFragment[13] ;
     static TreeSet<Integer> selectedTags = new TreeSet<Integer>() ;
     private Context mContext;
 
     public NewsPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         this.mContext = context;
-        for(int i = 0; i < 12; i ++) {
+        for(int i = 0; i < 13; i ++) {
             newsFragments[i] = new NewsFragment();
             newsFragments[i].mContext = mContext ;
-            newsFragments[i].tagId = i+1 ;
+            newsFragments[i].tagId = i ;
             newsFragments[i].update();
-            if(i%4 == 0) selectedTags.add(i);
         }
+        selectedTags.add(0);
     }
 
-    public void addTab(int tabId) {selectedTags.add(tabId) ;}
-    public void deleteTab(int tabId) {selectedTags.remove(tabId) ;}
-
+    public void addTag(int tagId)
+    {
+        selectedTags.add(tagId) ;
+        newsFragments[tagId] = new NewsFragment() ;
+        newsFragments[tagId].mContext = mContext ;
+        newsFragments[tagId].tagId = tagId ;
+        newsFragments[tagId].update() ;
+    }
+    public void deleteTag(int tagId)
+    {
+        selectedTags.remove(tagId);
+        newsFragments[tagId] = null ;
+    }
+    public void resetTag()
+    {
+        selectedTags.clear();
+        for(int i = 0; i < 13; i ++)
+            newsFragments[i] = null ;
+        addTag(0);
+    }
+    public TreeSet<Integer> getTag() {return selectedTags ;}
     @Override
     public Fragment getItem(int position) {
         return newsFragments[(Integer)selectedTags.toArray()[position]] ;

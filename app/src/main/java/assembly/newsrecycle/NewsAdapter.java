@@ -8,19 +8,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
-import activity.MainActivity;
 import activity.R;
 import controller.NewsReader;
 import news.News;
-import news.NewsDetail;
 
 /**
  * Created by kzf on 2017/9/6.
@@ -55,7 +51,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         if(viewType==TYPE_ITEM)
         {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item,viewGroup,false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.news_item,viewGroup,false);
             ItemViewHolder itemViewHolder=new ItemViewHolder(mContext, view);
             return itemViewHolder;
         }

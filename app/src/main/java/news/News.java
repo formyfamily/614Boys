@@ -46,6 +46,7 @@ public class News implements Serializable {
             classTagIdMap.put("娱乐", 12);
         }
     }
+    final public static String[] classIdTagArray = {"全部新闻", "科技", "教育", "军事", "国内", "社会", "文化", "汽车", "国际", "体育", "财经", "健康", "娱乐"} ;
     public String getLangType() {return langType;}
     public String getClassTag() {return classTag;}
     public int getClassTagId() {return classTagId;}
