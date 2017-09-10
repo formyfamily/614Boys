@@ -163,8 +163,10 @@ public class NewsDatabase {
         if (cursor.moveToNext()){
             db.update("favorite",values,"id=?",argList);
         }
-        values.put("id",id);
-        db.insert("favorite",null,values);
+        else {
+            values.put("id", id);
+            db.insert("favorite", null, values);
+        }
     }
 /*
     private String downloadPicture(final String urlStr,final String id){
