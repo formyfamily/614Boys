@@ -4,13 +4,18 @@ package news;
  * Created by Administrator on 2017/9/5.
  */
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -91,11 +96,13 @@ public class News implements Serializable {
             author = jsonObject.getString("news_Author");
             id = jsonObject.getString("news_ID");
             String pics = jsonObject.getString("news_Pictures");
-            String[] picses = pics.split(";");
+            String[] picses = pics.split("[;\\s]");
             pictures = new ArrayList<String>();
+            if (pics.equals(""))
+                picses = new String[0];
             for (String pic : picses) {
                 pictures.add(pic);
-            }// It's too complicated
+            }
             source = jsonObject.getString("news_Source");
             time = jsonObject.getString("news_Time");
             title = jsonObject.getString("news_Title");
@@ -121,5 +128,28 @@ public class News implements Serializable {
     }
     public void setFavorite(boolean isFavorite_) {
         NewsDatabase.getInstance().setFavorite(id, isFavorite_);
+    }
+    public Bitmap getFirstPicture() {
+        try {
+            //创建一个url对象
+            URL url = new URL(pictures.get(0));
+            //打开URL对应的资源输入流
+            InputStream is = url.openStream();
+            Bitmap originBitmap = BitmapFactory.decodeStream(is);
+            float width = originBitmap.getWidth();
+            float height = originBitmap.getHeight();
+            // 创建操作图片用的matrix对象
+            Matrix matrix = new Matrix();
+            // 计算宽高缩放率
+            float scaleWidth = ((float) 100) / width;
+            float scaleHeight = ((float) 100) / height;
+            // 缩放图片动作
+            matrix.postScale(scaleWidth, scaleHeight);
+            Bitmap bitmap = Bitmap.createBitmap(originBitmap, 0, 0, (int) width,
+                    (int) height, matrix, true);
+            return bitmap;
+        } catch (Exception e) {
+            return NewsProxy.getInstance().notFoundBitmap;
+        }
     }
 }

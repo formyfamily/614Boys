@@ -35,6 +35,8 @@ public class NewsProxy {
     private int displaySize[];
     private static final int perLoadNum = 100;
     private static final int perDisplayNum = 20;
+    private Activity thisActivity;
+    public Bitmap notFoundBitmap;
     private ArrayList<News> newsAll[];
     private NewsProxy() {}
     public static synchronized NewsProxy getInstance() {
@@ -51,6 +53,15 @@ public class NewsProxy {
         }
         return newsProxy;
     }
+    public void setThisActivity(Activity activity) {
+        thisActivity = activity;
+        try {
+            InputStream is = thisActivity.getAssets().open("image-not-found.jpg");
+            notFoundBitmap = BitmapFactory.decodeStream(is);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public int getDisplaySize(int classTagId) {
         return  displaySize[classTagId];
     }
@@ -61,8 +72,12 @@ public class NewsProxy {
         ArrayList<News> sublist = new ArrayList<News>();
         System.out.printf("displaysize[%d] = %d size[%d] = %d \n", classTagId ,displaySize[classTagId], classTagId, size[classTagId]);
         System.out.printf("now size[%d] = %d \n", classTagId, newsAll[classTagId].size());
-        for (int i = 0; i < displaySize[classTagId]; i++)
-            sublist.add(newsAll[classTagId].get(i));
+       // try {
+            for (int i = 0; i < displaySize[classTagId]; i++)
+                sublist.add(newsAll[classTagId].get(i));
+       // } catch (IndexOutOfBoundsException e) {
+          //  e.printStackTrace();
+      //  }
         return sublist;
 
         // It's too complicated
