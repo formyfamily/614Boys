@@ -3,6 +3,7 @@ package activity;
 import assembly.newsrecycle.NewsAdapter;
 import cn.sharesdk.framework.Platform;
 import controller.NewsReciter;
+import controller.NewsRecommender;
 import news.* ;
 import cn.sharesdk.onekeyshare.*;
 import android.content.Intent;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         // initialize voice configuration object, used for reading news aloud
         SpeechUtility.createUtility(this, SpeechConstant.APPID +"=59b214cf");
         NewsReciter.getInstance().init(this);
+
+
 
 
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

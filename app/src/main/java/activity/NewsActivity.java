@@ -95,7 +95,7 @@ public class NewsActivity extends AppCompatActivity {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<String> keywords = new NewsRecommender().getRecommendedWords();
+
             }
         });
     }
