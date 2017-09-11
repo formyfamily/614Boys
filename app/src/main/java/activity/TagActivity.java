@@ -1,26 +1,14 @@
 package activity;
 
-import assembly.slidingtab.NewsFragment;
-import assembly.slidingtab.NewsPagerAdapter;
-import assembly.slidingtab.SlidingTabLayout;
-import assembly.taglistview.TagAdapter;
-import controller.NewsFavourite;
-import news.* ;
-import android.app.Activity;
+import fragment.slidingtab.NewsPagerAdapter;
+import fragment.taglistview.TagAdapter;
+
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  * Created by kzf on 2017/9/6.

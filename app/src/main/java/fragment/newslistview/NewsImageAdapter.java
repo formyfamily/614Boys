@@ -1,28 +1,17 @@
-package assembly.taglistview;
+package fragment.taglistview;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.TreeSet;
-import java.util.zip.Inflater;
 
 import activity.R;
-import controller.NewsReader;
-import news.News;
 import news.NewsDetail;
 
 /**
@@ -37,6 +26,7 @@ public class NewsImageAdapter extends BaseAdapter
 
     public NewsImageAdapter(Context context, NewsDetail newsDetail)
     {
+        mContext = context ;
         pictures = newsDetail.getPictureList() ;
     }
 

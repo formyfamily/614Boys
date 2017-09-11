@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">614B</string>
     <string name="newsdetail_name">新闻详情</string>
+    <string name="drawer_open">open drawer</string>
+    <string name="drawer_close">close drawer</string>
     <!--<string name="appbar_scrolling_view_behavior">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>-->
 </resources>

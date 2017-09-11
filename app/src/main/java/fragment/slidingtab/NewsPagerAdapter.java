@@ -1,13 +1,10 @@
-package assembly.slidingtab;
+package fragment.slidingtab;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import news.News;

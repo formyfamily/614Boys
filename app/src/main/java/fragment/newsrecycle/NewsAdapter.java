@@ -1,4 +1,4 @@
-package assembly.newsrecycle;
+package fragment.newsrecycle;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -73,7 +73,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ivh.news = datas.get(position) ;
             ivh.newAdapter = this ;
             ivh.mTextView.setText(ivh.news.getTitle());
-            ivh.mImageView.setImageBitmap(ivh.news.getFirstPicture());
+           // ivh.mImageView.setImageBitmap(ivh.news.getFirstPicture());
             String dateString = ivh.news.getTime() ;
             ivh.mItemInfo.setText(ivh.news.getSource()+"    "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8)) ;
             if(ivh.news.isRead())

@@ -1,19 +1,20 @@
 package activity;
 
+import fragment.taglistview.NewsImageAdapter;
 import controller.NewsFavourite;
 import controller.NewsReciter;
+import controller.NewsSharer;
 import news.* ;
-import android.app.Activity;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -64,6 +65,9 @@ public class NewsActivity extends AppCompatActivity {
         String dateString = newsDetail.getTime() ;
         infoView.setText(newsDetail.getSource()+"   "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8));
 
+        ListView pictureListView = (ListView)findViewById(R.id.news_picture_listview) ;
+        pictureListView.setAdapter(new NewsImageAdapter(NewsActivity.this, newsDetail));
+
         favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
         setFavouriteButtonState(newsDetail.isFavorite());
         favouriteButton.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +92,13 @@ public class NewsActivity extends AppCompatActivity {
                     reciteButton.setLabelText("停止播放");
                 }
                 reciter1.hasStarted = !reciter1.hasStarted;
+            }
+        });
+        final com.github.clans.fab.FloatingActionButton shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)  {
+                NewsSharer.getInstance().shareNews(NewsActivity.this, newsDetail) ;
             }
         });
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package assembly.slidingtab;
+package fragment.slidingtab;
 
 import android.R;
 import android.content.Context;

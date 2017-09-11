@@ -1,38 +1,38 @@
 package activity;
 
-import assembly.newsrecycle.NewsAdapter;
-import cn.sharesdk.framework.Platform;
 import controller.NewsReciter;
 import news.* ;
-import cn.sharesdk.onekeyshare.*;
 
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
-import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
-import assembly.slidingtab.SlidingTabLayout;
-import assembly.slidingtab.NewsPagerAdapter;
+import fragment.slidingtab.SlidingTabLayout;
+import fragment.slidingtab.NewsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
+    boolean nightMode = false ;
+    boolean noPictureMode = false ;
     Toolbar toolbar ;
     ViewPager viewPager ;
     NewsPagerAdapter newsPagerAdapter ;
@@ -42,26 +42,70 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        // -- --- -- --- Some initialization
         NewsDatabase.getInstance().setThisActivity(MainActivity.this);
         DatabaseHelper.init(this);
         NewsDetail.setThisActivity(MainActivity.this);
         // initialize voice configuration object, used for reading news aloud
         SpeechUtility.createUtility(this, SpeechConstant.APPID +"=59b214cf");
         NewsReciter.getInstance().init(this);
-        // NewsReciter.getInstance().speakText("我是最菜的");  // An example
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        // -- --- -- --- Setup ToolBar
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
+
+
+        // -- --- -- --- Setup DrawerLayout
+        final DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
+                R.string.drawer_open, R.string.drawer_close);
+        mDrawerToggle.syncState();//初始化状态
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(Gravity.LEFT) ;
+            }
+        }) ;
+
+        // -- --- -- --- Setup Menu Botton Click Events
+
+        final LinearLayout nightModeBotton = (LinearLayout)findViewById(R.id.night_mode_button) ;
+        nightModeBotton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView nightModeText = (TextView)findViewById(R.id.night_mode_text) ;
+                if(nightMode == false)
+                    nightModeText.setTextColor(getResources().getColor(R.color.colorPrimary));
+                else nightModeText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
+                nightMode = !nightMode ;
+            }
+        });
+        final LinearLayout noPictureModeBotton = (LinearLayout)findViewById(R.id.nopicture_mode_button) ;
+        noPictureModeBotton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView noPictureText = (TextView)findViewById(R.id.nopicture_mode_text) ;
+                if(noPictureMode == false)
+                    noPictureText.setTextColor(getResources().getColor(R.color.colorPrimary));
+                else noPictureText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
+                noPictureMode = !noPictureMode ;
+            }
+        });
+
+        // -- --- -- --- Setup SlidingTab
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         newsPagerAdapter = new NewsPagerAdapter(getSupportFragmentManager(), MainActivity.this) ;
         viewPager.setAdapter(newsPagerAdapter);
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setViewPager(viewPager);
-        imageButton = (ImageButton)findViewById(R.id.tab_set_button) ;
 
+        // -- --- -- --- Setup TagActivity Button
+        imageButton = (ImageButton)findViewById(R.id.tab_set_button) ;
         imageButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -112,14 +156,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void createNewNewsActivity(News news)
-    {
-        //showShare(news);
-        Intent intent = new Intent(MainActivity.this, NewsActivity.class) ;
-        intent.putExtra("News", news.getId()) ;
-        startActivityForResult(intent, 1);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0 && resultCode == 0) {
@@ -136,4 +172,13 @@ public class MainActivity extends AppCompatActivity {
             newsPagerAdapter.update();
         }
     }
+
+    public void createNewNewsActivity(News news)
+    {
+        //showShare(news);
+        Intent intent = new Intent(MainActivity.this, NewsActivity.class) ;
+        intent.putExtra("News", news.getId()) ;
+        startActivityForResult(intent, 1);
+    }
+
 }
