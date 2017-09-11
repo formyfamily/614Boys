@@ -94,11 +94,69 @@ public class NewsDetail extends News {
                 System.out.println("start(): " + m.start());
                 System.out.println("end(): " + m.end());
                 System.out.println("group(): " + m.group());
-                newContent = newContent + content.substring(cur, m.start()) + content.substring(m.start(),m.start() + 1) + "\n\n    ";
+                newContent = newContent + content.substring(cur, m.start()) + content.substring(m.start(),m.start() + 1) + "<\\br> <\\br>&nbsp;&nbsp;&nbsp;&nbsp;";
                 cur = m.end();
             }
             newContent = newContent + content.substring(cur, content.length()) + '\n';
+            /*
+            if (jsonObject.has("organizations")) {
+                JSONArray organizations = jsonObject.getJSONArray("organizations");
+                for (int i = 0; i < organizations.length(); i++) {
+                    JSONObject organization = organizations.getJSONObject(i);
+                    String aNewContent = new String();
+                    String word = organization.getString("word");
+                    System.out.println("word:" + word);
+                    Pattern aPattern = Pattern.compile(word);
+                    Matcher aMatcher = p.matcher(newContent);
+                    newContent = aMatcher.replaceAll("<a href = \'https://baike.baidu.com/item/" + word + "\'>" + word + "<\\a>");
+                }
+            }
+            */
+            /*
+            String testS = "我爱你";
+            String testSP = "爱";
+            Pattern testP = Pattern.compile(testSP);
+            Matcher testM = testP.matcher(testS);
+            while (testM.find()) {
+                System.out.println("group(): " + testM.group());
+            }
+            */
+            if (jsonObject.has("persons")) {
+                JSONArray persons = jsonObject.getJSONArray("persons");
+                for (int i = 0; i < persons.length(); i++) {
+                    JSONObject person = persons.getJSONObject(i);
+                    String word = person.getString("word");
+                    System.out.println("word:" + word);
+                    Pattern aPattern = Pattern.compile(word);
+                    Matcher aMatcher = aPattern.matcher(newContent);
+                    newContent =aMatcher.replaceAll("<a href = \'https://baike.baidu.com/item/" + word + "\'>" + word + "<\\a>");
+                    System.out.println(newContent);
+                }
+            }
+            if (jsonObject.has("organizations")) {
+                JSONArray organizations = jsonObject.getJSONArray("organizations");
+                for (int i = 0; i < organizations.length(); i++) {
+                    JSONObject organization = organizations.getJSONObject(i);
+                    String word = organization.getString("word");
+                    System.out.println("word:" + word);
+                    Pattern aPattern = Pattern.compile(word);
+                    Matcher aMatcher = aPattern.matcher(newContent);
+                    newContent = new String(aMatcher.replaceAll("<a href = \'https://baike.baidu.com/item/" + word + "\'>" + word + "<\\a>"));
+                }
+            }
+            if (jsonObject.has("locations")) {
+                JSONArray locations = jsonObject.getJSONArray("locations");
+                for (int i = 0; i < locations.length(); i++) {
+                    JSONObject location = locations.getJSONObject(i);
+                    String word = location.getString("word");
+                    System.out.println("word:" + word);
+                    Pattern aPattern = Pattern.compile(word);
+                    Matcher aMatcher = aPattern.matcher(newContent);
+                    newContent = new String(aMatcher.replaceAll("<a href = \'https://baike.baidu.com/item/" + word + "\'>" + word + "<\\a>"));
+                }
+            }
             setContent(newContent);
+
             setId(jsonObject.getString("news_ID"));
             setJournal(jsonObject.getString("news_Journal"));
             setSource(jsonObject.getString("news_Source"));
