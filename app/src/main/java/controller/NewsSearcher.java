@@ -15,7 +15,7 @@ import news.News;
 /**
  * Created by thinkpad on 2017/9/9.
  */
-
+/*
 public class NewsSearcher {
     private static NewsSearcher searcher = null;
     private NewsSearcher(){}
@@ -82,3 +82,4 @@ public class NewsSearcher {
         } catch (InterruptedException e){
             e.printStackTrace();
         }
+*/

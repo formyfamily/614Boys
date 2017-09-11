@@ -142,31 +142,22 @@ public class NewsDatabase {
 
     public boolean isFavorite(String id){
         SQLiteDatabase db = DatabaseHelper.getDbHelper().getReadableDatabase();
-        String[] argList = new String[1];
-        argList[0] = id;
-        Cursor cursor = db.query("favorite", new String[]{"id","isfavorite"}, "id=?", argList, null, null, null);
-        if (cursor.moveToNext()) {
-            int result = cursor.getColumnIndex("isfavorite");
-            if (result==1) return(true);
-            else return(false);
-        }
+        Cursor cursor = db.query("favorite", new String[]{"id"}, "id=?", new String[]{id}, null, null, null);
+        if (cursor.moveToNext()) return(true);
         return(false);
     }
 
     public void setFavorite(String id,boolean isfavorite_){
-        int isfavorite = 0;
-        if (isfavorite_) isfavorite = 1;
         SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
-        String[] argList = new String[1];
-        argList[0] = id;
-        Cursor cursor = db.query("favorite", new String[]{"id","isfavorite"}, "id=?", argList, null, null, null);
+        Cursor cursor = db.query("favorite", new String[]{"id"}, "id=?", new String[]{id}, null, null, null);
         ContentValues values = new ContentValues();
-        values.put("isfavorite",isfavorite);
         if (cursor.moveToNext()){
-            db.update("favorite",values,"id=?",argList);
+            db.delete("favorite","id=?",new String[]{id});
         }
-        values.put("id",id);
-        db.insert("favorite",null,values);
+        else {
+            values.put("id", id);
+            db.insert("favorite", null, values);
+        }
     }
 
     public void saveNewsNLP(NewsNLP newsNLP) {

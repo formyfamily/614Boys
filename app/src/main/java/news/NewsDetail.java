@@ -1,6 +1,7 @@
 package news;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
@@ -65,7 +66,10 @@ public class NewsDetail extends News {
             setId(jsonObject.getString("news_ID"));
             setJournal(jsonObject.getString("news_Journal"));
             setSource(jsonObject.getString("news_Source"));
-            setTime(jsonObject.getString("news_Time"));
+            String timeGet = jsonObject.getString("news_Time");
+            timeGet = timeGet.substring(0, 4) + "-" + timeGet.substring(4, 6) + "-" + timeGet.substring(6, 8);
+            setTime(timeGet);
+
             setTitle(jsonObject.getString("news_Title"));
 
             setUrl(jsonObject.getString("news_URL"));
@@ -212,7 +216,18 @@ public class NewsDetail extends News {
             NewsDatabase.getInstance().saveNewsNLP(newsNLP);
             return newsDetail;
         }
-
     }
-
+    public ArrayList<Bitmap> getPictureList() {
+        ArrayList<Bitmap> pictureList = new ArrayList<Bitmap>();
+        try {
+            for (String localUrl : picturesLocal) {
+                FileInputStream fis = new FileInputStream(localUrl);
+                Bitmap bitmap  = BitmapFactory.decodeStream(fis);
+                pictureList.add(bitmap);
+            }
+            return  pictureList;
+        }catch (Exception e) {
+            return pictureList;
+        }
+    }
 }
