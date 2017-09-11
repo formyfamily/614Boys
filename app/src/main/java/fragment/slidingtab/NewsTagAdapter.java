@@ -12,7 +12,7 @@ import news.News;
 /**
  * @author fyales
  */
-public class NewsPagerAdapter extends FragmentPagerAdapter {
+public class NewsTagAdapter extends FragmentPagerAdapter {
 
 
     private String mTabTitle[] = News.classIdTagArray;
@@ -20,7 +20,7 @@ public class NewsPagerAdapter extends FragmentPagerAdapter {
     static TreeSet<Integer> selectedTags = new TreeSet<Integer>();
     private Context mContext;
 
-    public NewsPagerAdapter(FragmentManager fm, Context context) {
+    public NewsTagAdapter(FragmentManager fm, Context context) {
         super(fm);
         this.mContext = context;
         newsFragments[0] = new NewsFragment();

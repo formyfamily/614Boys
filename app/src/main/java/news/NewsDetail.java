@@ -73,7 +73,7 @@ public class NewsDetail extends News {
             setTitle(jsonObject.getString("news_Title"));
 
             setUrl(jsonObject.getString("news_URL"));
-            if (jsonObject.getString("news_Video") == "")
+            if (jsonObject.getString("news_Video").equals(""))
                 setVideo(null);
             else setVideo(jsonObject.getString("news_Video"));
             String pics = jsonObject.getString("news_Pictures");
@@ -178,6 +178,7 @@ public class NewsDetail extends News {
             return NewsDatabase.getInstance().getNewsDetailById(id);
         } else { //grab it from internet and save it to datebase
             final NewsDetail newsDetail = new NewsDetail();
+            final NewsNLP newsNLP = new NewsNLP();
             Thread thread = new Thread() {
                 @Override
                 public void run() {
@@ -193,6 +194,7 @@ public class NewsDetail extends News {
                         JSONObject jsonObject = new JSONObject(json);
                         NewsDetail.setThisActivity(thisActivity);
                         newsDetail.setByJsonObject(jsonObject);
+                        newsNLP.setByJsonObject(jsonObject);
                     } catch (MalformedURLException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -211,6 +213,7 @@ public class NewsDetail extends News {
                 e.printStackTrace();
             }
             NewsDatabase.getInstance().saveNewsDetail(newsDetail);
+            NewsDatabase.getInstance().saveNewsNLP(newsNLP);
             return newsDetail;
         }
     }

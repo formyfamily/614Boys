@@ -50,13 +50,13 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         if(viewType==TYPE_ITEM)
         {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.news_item,viewGroup,false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_news_tag_refreshlayout_item,viewGroup,false);
             ItemViewHolder itemViewHolder=new ItemViewHolder(mContext, view);
             return itemViewHolder;
         }
         else if(viewType==TYPE_FOOTER)
         {
-            View foot_view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.footer_view,viewGroup,false);
+            View foot_view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_footer_view,viewGroup,false);
             FootViewHolder footViewHolder=new FootViewHolder(foot_view);
             return footViewHolder;
         }

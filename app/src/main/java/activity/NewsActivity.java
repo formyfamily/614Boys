@@ -4,6 +4,7 @@ import fragment.taglistview.NewsImageAdapter;
 import controller.NewsFavourite;
 import controller.NewsReciter;
 import controller.NewsSharer;
+import controller.NewsRecommender;
 import news.* ;
 
 import android.os.Build;
@@ -16,6 +17,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 /**
  * Created by kzf on 2017/9/6.
@@ -114,5 +117,13 @@ public class NewsActivity extends AppCompatActivity {
             favouriteButton.setColorNormal(getResources().getColor(R.color.colorFavourite));
             favouriteButton.setColorPressed(getResources().getColor(R.color.colorFavoriteLight));
         }
+
+        com.github.clans.fab.FloatingActionButton shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> keywords = new NewsRecommender().getRecommendedWords();
+            }
+        });
     }
 }

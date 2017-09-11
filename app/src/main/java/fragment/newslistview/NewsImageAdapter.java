@@ -36,7 +36,7 @@ public class NewsImageAdapter extends BaseAdapter
         if(convertView == null)
         {
             LayoutInflater mInflater = LayoutInflater.from(mContext);
-            convertView = mInflater.inflate(R.layout.newspicture_item, parent, false) ;
+            convertView = mInflater.inflate(R.layout.news_picture_item, parent, false) ;
             final ImageView imageView = (ImageView)convertView.findViewById(R.id.news_pictureview) ;
             imageView.setImageBitmap(pictures.get(position));
         }

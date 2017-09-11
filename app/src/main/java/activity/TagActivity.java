@@ -1,6 +1,6 @@
 package activity;
 
-import fragment.slidingtab.NewsPagerAdapter;
+import fragment.slidingtab.NewsTagAdapter;
 import fragment.taglistview.TagAdapter;
 
 import android.content.Intent;
@@ -16,7 +16,7 @@ import android.widget.ListView;
 
 public class TagActivity extends AppCompatActivity {
 
-    static NewsPagerAdapter newsPagerAdapter ;
+    static NewsTagAdapter newsTagAdapter;
     TagAdapter tagAdapter ;
     ListView listView ;
     @Override
@@ -28,7 +28,7 @@ public class TagActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        tagAdapter = new TagAdapter(this, newsPagerAdapter.getTag()) ;
+        tagAdapter = new TagAdapter(this, newsTagAdapter.getTag()) ;
         listView = (ListView)findViewById(R.id.tags_listview) ;
         listView.setAdapter(tagAdapter) ;
 

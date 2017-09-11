@@ -12,7 +12,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import activity.MainActivity;
 
@@ -140,32 +142,44 @@ public class NewsDatabase {
 
     public boolean isFavorite(String id){
         SQLiteDatabase db = DatabaseHelper.getDbHelper().getReadableDatabase();
-        String[] argList = new String[1];
-        argList[0] = id;
-        Cursor cursor = db.query("favorite", new String[]{"id","isfavorite"}, "id=?", argList, null, null, null);
-        if (cursor.moveToNext()) {
-            int result = cursor.getColumnIndex("isfavorite");
-            if (result==1) return(true);
-            else return(false);
-        }
+        Cursor cursor = db.query("favorite", new String[]{"id"}, "id=?", new String[]{id}, null, null, null);
+        if (cursor.moveToNext()) return(true);
         return(false);
     }
 
     public void setFavorite(String id,boolean isfavorite_){
-        int isfavorite = 0;
-        if (isfavorite_) isfavorite = 1;
         SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
-        String[] argList = new String[1];
-        argList[0] = id;
-        Cursor cursor = db.query("favorite", new String[]{"id","isfavorite"}, "id=?", argList, null, null, null);
+        Cursor cursor = db.query("favorite", new String[]{"id"}, "id=?", new String[]{id}, null, null, null);
         ContentValues values = new ContentValues();
-        values.put("isfavorite",isfavorite);
         if (cursor.moveToNext()){
-            db.update("favorite",values,"id=?",argList);
+            db.delete("favorite","id=?",new String[]{id});
         }
         else {
             values.put("id", id);
             db.insert("favorite", null, values);
+        }
+    }
+
+    public void saveNewsNLP(NewsNLP newsNLP) {
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
+        HashMap<String,Double> scores = newsNLP.getScores();
+        Iterator<HashMap.Entry<String,Double>> it = scores.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String,Double> thisEntry = it.next();
+            String word = thisEntry.getKey();
+            double score = thisEntry.getValue();
+            Cursor cursor = db.query("NLP",new String[]{"word","score"},"word=?",new String[]{word},null,null,null);
+            if (cursor.moveToNext()) {
+                ContentValues values = new ContentValues();
+                values.put("score",cursor.getDouble(cursor.getColumnIndex("score"))+score);
+                db.update("NLP",values,"word=?",new String[]{word});
+            }
+            else {
+                ContentValues values = new ContentValues();
+                values.put("word",word);
+                values.put("score",score);
+                db.insert("NLP",null,values);
+            }
         }
     }
 /*
