@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package assembly.slidingtab;
+package fragment.slidingtab;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -240,7 +240,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         View selectedChild = mTabStrip.getChildAt(tabIndex);
         if (selectedChild != null) {
-            NewsFragment newsFragment = NewsPagerAdapter.newsFragments[(Integer)NewsPagerAdapter.selectedTags.toArray()[tabIndex]] ;
+            NewsFragment newsFragment = NewsTagAdapter.newsFragments[(Integer) NewsTagAdapter.selectedTags.toArray()[tabIndex]] ;
             newsFragment.update() ;
             int targetScrollX = selectedChild.getLeft() + positionOffset;
 

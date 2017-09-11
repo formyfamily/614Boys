@@ -1,20 +1,21 @@
 package activity;
 
+import fragment.taglistview.NewsImageAdapter;
 import controller.NewsFavourite;
 import controller.NewsReciter;
+import controller.NewsSharer;
 import controller.NewsRecommender;
 import news.* ;
-import android.app.Activity;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,8 +26,8 @@ import java.util.ArrayList;
 
 public class NewsActivity extends AppCompatActivity {
     NewsDetail newsDetail ;
-    static CollapsingToolbarLayout collapsingToolbar ;
-    static FloatingActionButton fab ;
+    CollapsingToolbarLayout collapsingToolbar ;
+    com.github.clans.fab.FloatingActionButton favouriteButton ;
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -64,13 +65,19 @@ public class NewsActivity extends AppCompatActivity {
         TextView textView = (TextView)findViewById(R.id.news_text) ;
         textView.setText(newsDetail.getContent());
         TextView infoView = (TextView)findViewById(R.id.news_info) ;
-        infoView.setText(newsDetail.getSource()+"   "+newsDetail.getTime());
+        String dateString = newsDetail.getTime() ;
+        infoView.setText(newsDetail.getSource()+"   "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8));
 
-        com.github.clans.fab.FloatingActionButton favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
+        ListView pictureListView = (ListView)findViewById(R.id.news_picture_listview) ;
+        pictureListView.setAdapter(new NewsImageAdapter(NewsActivity.this, newsDetail));
+
+        favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
+        setFavouriteButtonState(newsDetail.isFavorite());
         favouriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NewsFavourite.getInstance().favouriteNews(NewsActivity.this, newsDetail);
+                setFavouriteButtonState(newsDetail.isFavorite());
             }
         });
 
@@ -90,6 +97,26 @@ public class NewsActivity extends AppCompatActivity {
                 reciter1.hasStarted = !reciter1.hasStarted;
             }
         });
+        final com.github.clans.fab.FloatingActionButton shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)  {
+                NewsSharer.getInstance().shareNews(NewsActivity.this, newsDetail) ;
+            }
+        });
+    }
+    void setFavouriteButtonState(boolean is_favourite)
+    {
+        if(!is_favourite) {
+            favouriteButton.setLabelText("收藏新闻");
+            favouriteButton.setColorNormal(getResources().getColor(R.color.colorFavourite));
+            favouriteButton.setColorPressed(getResources().getColor(R.color.colorFavoriteLight));
+        }
+        else {
+            favouriteButton.setLabelText("取消收藏");
+            favouriteButton.setColorNormal(getResources().getColor(R.color.colorFavourite));
+            favouriteButton.setColorPressed(getResources().getColor(R.color.colorFavoriteLight));
+        }
 
         com.github.clans.fab.FloatingActionButton shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
         shareButton.setOnClickListener(new View.OnClickListener() {

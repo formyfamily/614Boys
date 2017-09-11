@@ -1,4 +1,4 @@
-package assembly;
+package fragment;
 
 import android.content.Context;
 import android.content.res.TypedArray;

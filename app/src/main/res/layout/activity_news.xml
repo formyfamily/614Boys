@@ -77,9 +77,14 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/text_margin"
                 android:layout_marginRight="@dimen/text_margin"
-                android:paddingBottom="120dp"
+                android:paddingBottom="@dimen/text_margin"
                 android:text="eghawegweawg"
                 android:textSize="17dp" />
+            <ListView
+                android:id="@+id/news_picture_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="120dp"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

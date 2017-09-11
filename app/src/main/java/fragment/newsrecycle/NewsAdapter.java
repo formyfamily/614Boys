@@ -1,4 +1,4 @@
-package assembly.newsrecycle;
+package fragment.newsrecycle;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -8,19 +8,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
-import activity.MainActivity;
 import activity.R;
 import controller.NewsReader;
 import news.News;
-import news.NewsDetail;
 
 /**
  * Created by kzf on 2017/9/6.
@@ -50,24 +46,20 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.datas = datas;
     }
 
-    //创建新View，被LayoutManager所调用
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         if(viewType==TYPE_ITEM)
         {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item,viewGroup,false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_news_tag_refreshlayout_item,viewGroup,false);
             ItemViewHolder itemViewHolder=new ItemViewHolder(mContext, view);
             return itemViewHolder;
         }
         else if(viewType==TYPE_FOOTER)
         {
-            View foot_view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.footer_view,viewGroup,false);
+            View foot_view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_footer_view,viewGroup,false);
             FootViewHolder footViewHolder=new FootViewHolder(foot_view);
             return footViewHolder;
         }
-        //else if(viewType==TYPE_REFRESHER)
-        //{
-        //}
         return null ;
     }
 
@@ -81,14 +73,17 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ivh.news = datas.get(position) ;
             ivh.newAdapter = this ;
             ivh.mTextView.setText(ivh.news.getTitle());
-            ivh.mImageView.setImageBitmap(BitmapFactory.decodeResource(resources, R.mipmap.search_icon2));
+           // ivh.mImageView.setImageBitmap(ivh.news.getFirstPicture());
             String dateString = ivh.news.getTime() ;
             ivh.mItemInfo.setText(ivh.news.getSource()+"    "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8)) ;
             if(ivh.news.isRead())
                 ivh.mTextView.setTextColor(resources.getColor(R.color.colorReaded));
             else
                 ivh.mTextView.setTextColor(resources.getColor(R.color.colorUnreaded));
-            ivh.mSaveIcon.setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.star));
+            ivh.mFavouriteIcon.setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.filled_star2));
+            if(ivh.news.isFavorite())
+                ivh.mFavouriteIcon.setAlpha(200);
+            else ivh.mFavouriteIcon.setAlpha(0);
         }
         else if(viewHolder instanceof NewsAdapter.FootViewHolder)
         {
@@ -134,7 +129,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public News news ;
         public TextView mTextView;
         public ImageView mImageView;
-        public ImageView mSaveIcon;
+        public ImageView mFavouriteIcon;
         public TextView mItemInfo ;
         public LinearLayout newsItem ;
         public Context mContext ;
@@ -145,7 +140,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             newsItem = (LinearLayout) view.findViewById(R.id.news_item) ;
             mTextView = (TextView) view.findViewById(R.id.item_text);
             mImageView = (ImageView) view.findViewById(R.id.item_image);
-            mSaveIcon = (ImageView) view.findViewById(R.id.item_star_icon);
+            mFavouriteIcon = (ImageView) view.findViewById(R.id.item_favourite_icon);
             mItemInfo = (TextView) view.findViewById(R.id.item_info) ;
             newsItem.setOnClickListener(new View.OnClickListener() {
                 @Override
