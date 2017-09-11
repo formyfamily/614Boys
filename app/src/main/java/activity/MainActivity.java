@@ -1,9 +1,9 @@
 package activity;
 
 import controller.NewsReciter;
-import fragment.slidingtab.MainTagEntity;
-import fragment.slidingtab.NewsNormalFragment;
-import fragment.slidingtab.NewsTagFragment;
+import fragment.main_slidingtab.MainTagEntity;
+import fragment.main_slidingtab.NewsNormalFragment;
+import fragment.main_slidingtab.NewsTagFragment;
 import news.* ;
 
 import android.content.Context;
@@ -33,7 +33,7 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 
-import fragment.slidingtab.NewsTagAdapter;
+import fragment.main_slidingtab.NewsTagAdapter;
 
 public class MainActivity extends AppCompatActivity {
 

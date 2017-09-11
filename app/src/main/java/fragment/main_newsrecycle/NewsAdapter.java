@@ -1,4 +1,4 @@
-package fragment.newsrecycle;
+package fragment.main_newsrecycle;
 
 import android.content.Context;
 import android.content.res.Resources;

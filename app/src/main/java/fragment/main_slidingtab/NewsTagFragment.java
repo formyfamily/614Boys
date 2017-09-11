@@ -1,53 +1,24 @@
-package fragment.slidingtab;
+package fragment.main_slidingtab;
 
 /**
  * Created by kzf on 2017/9/11.
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 
 import activity.MainActivity;
 import activity.R;
-import activity.TagActivity;
-import fragment.DividerItemDecoration;
-import fragment.newsrecycle.NewsAdapter;
-import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
 import news.NewsProxy;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
-
-import activity.R;
-import fragment.DividerItemDecoration;
-import fragment.newsrecycle.NewsAdapter;
-import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
-import news.NewsProxy;
 
 /**
  * @author fyales

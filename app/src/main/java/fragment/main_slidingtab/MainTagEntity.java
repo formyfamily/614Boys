@@ -1,4 +1,4 @@
-package fragment.slidingtab;
+package fragment.main_slidingtab;
 
 import com.flyco.tablayout.listener.CustomTabEntity;
 

@@ -1,6 +1,6 @@
 package activity;
 
-import fragment.taglistview.NewsImageAdapter;
+import fragment.tag_listview.NewsImageAdapter;
 import controller.NewsFavourite;
 import controller.NewsReciter;
 import controller.NewsSharer;

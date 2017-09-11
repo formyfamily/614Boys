@@ -3,7 +3,7 @@ package controller;
 import android.content.Context;
 
 import activity.MainActivity;
-import fragment.newsrecycle.NewsAdapter;
+import fragment.main_newsrecycle.NewsAdapter;
 import news.* ;
 /**
  * Created by kzf on 2017/9/7.

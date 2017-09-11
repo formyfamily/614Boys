@@ -1,7 +1,7 @@
 package activity;
 
-import fragment.slidingtab.NewsTagAdapter;
-import fragment.taglistview.TagAdapter;
+import fragment.main_slidingtab.NewsTagAdapter;
+import fragment.tag_listview.TagAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;

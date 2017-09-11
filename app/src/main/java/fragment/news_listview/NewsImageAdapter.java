@@ -1,4 +1,4 @@
-package fragment.taglistview;
+package fragment.tag_listview;
 
 import android.content.Context;
 import android.content.res.Resources;

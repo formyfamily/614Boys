@@ -11,12 +11,12 @@
     <color name="colorFavourite">#ffca28</color>
     <color name="colorFavoriteLight">#ffecb3</color>
 
-    <color name="colorShare">#2baf2b</color>
-    <color name="colorShareDark">#0a7e07</color>
+    <color name="colorShare">#66bb6a</color>
+    <color name="colorShareDark">#43a047</color>
     <color name="colorShareLight">#a3e9a4</color>
 
-    <color name="colorVoice">#ec407a</color>
-    <color name="colorVoiceDark">#c2185b</color>
-    <color name="colorVoiceLight">#f8bbd0</color>
+    <color name="colorVoice">#ef5350</color>
+    <color name="colorVoiceDark">#e53935</color>
+    <color name="colorVoiceLight">#ef9a9a</color>
 
 </resources>

@@ -1,4 +1,4 @@
-package fragment;
+package fragment.main_newsrecycle;
 
 import android.content.Context;
 import android.content.res.TypedArray;

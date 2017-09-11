@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fragment.slidingtab;
+package fragment.main_slidingtab;
 
 import android.content.Context;
 import android.graphics.Typeface;

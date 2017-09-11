@@ -1,4 +1,4 @@
-package fragment.slidingtab;
+package fragment.main_slidingtab;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 
 import activity.R;
-import fragment.DividerItemDecoration;
-import fragment.newsrecycle.NewsAdapter;
+import fragment.main_newsrecycle.DividerItemDecoration;
+import fragment.main_newsrecycle.NewsAdapter;
 import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
 import news.NewsProxy;
 
