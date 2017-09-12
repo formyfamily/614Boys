@@ -69,9 +69,9 @@ public class NewsActivity extends AppCompatActivity {
 
         RecyclerView pictureListView = (RecyclerView)findViewById(R.id.news_picture_recycleview) ;
         pictureListView.setAdapter(new NewsImageAdapter(NewsActivity.this, newsDetail));
-        /*ViewGroup.LayoutParams params = pictureListView.getLayoutParams();
+        ViewGroup.LayoutParams params = pictureListView.getLayoutParams();
         params.height = 40 + (260*pictureListView.getAdapter().getItemCount());
-        pictureListView.setLayoutParams(params);*/
+        pictureListView.setLayoutParams(params);
 
         favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
         setFavouriteButtonState(newsDetail.isFavorite());

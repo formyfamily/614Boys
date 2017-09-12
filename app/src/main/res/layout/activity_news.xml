@@ -71,12 +71,6 @@
                 android:src="@drawable/divider_bg"
                 android:layout_marginBottom="@dimen/text_margin"
                 />
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/news_picture_recycleview"
-                android:layout_width="match_parent"
-                android:layout_height="1000dp"
-                android:paddingBottom="18dp"
-                android:paddingTop="25dp" />
             <TextView
                 android:id="@+id/news_text"
                 android:layout_width="wrap_content"
@@ -86,6 +80,12 @@
                 android:text="eghawegweawg"
                 android:textSize="17dp"
                 android:paddingBottom="120dp"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/news_picture_recycleview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="18dp"
+                android:paddingTop="25dp" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
