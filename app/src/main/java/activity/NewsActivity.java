@@ -85,7 +85,6 @@ public class NewsActivity extends AppCompatActivity {
         reciteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)  {
-                /*
                 NewsReciter reciter1 = NewsReciter.getInstance();
                 if (reciter1.hasStarted) {
                     reciter1.stopSpeaking();
@@ -96,9 +95,6 @@ public class NewsActivity extends AppCompatActivity {
                     reciteButton.setLabelText("停止播放");
                 }
                 reciter1.hasStarted = !reciter1.hasStarted;
-                */
-                ArrayList<News> newses = NewsDatabase.getInstance().getAllFavorite();
-                return;
             }
         });
         final com.github.clans.fab.FloatingActionButton shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;

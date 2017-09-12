@@ -51,8 +51,8 @@ class InternetQueryThread3 extends Thread {
             String json = out.toString();
             JSONObject jsonObject = new JSONObject(json);
             NewsDetail.setThisActivity(thisActivity);
-            newsDetail.setByJsonObject(jsonObject);
             newsNLP.setByJsonObject(jsonObject);
+            newsDetail.setByJsonObject(jsonObject);
             success = true;
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -114,12 +114,22 @@ public class NewsDetail extends News {
             else setVideo(jsonObject.getString("news_Video"));
             String pics = jsonObject.getString("news_Pictures");
             String[] picses = pics.split("[;\\s]");
-            if (pics.equals(""))
-                picses = new String[0];
 
             setPictures(new ArrayList<String>());
             setPicturesLocal(new ArrayList<String>());
             ArrayList<String> pictures = getPictures();
+            JSONArray wordScoreArray = jsonObject.getJSONArray("Keywords");
+            if (pics.equals("")) {                                                     // Search pictures online when no picture is provided
+                ArrayList<String> pictureSearchKeywords = new ArrayList<String>();
+                for (int i = 0; i < Math.min(3, wordScoreArray.length()); i++) {
+                    JSONObject jsonObject1 = wordScoreArray.getJSONObject(i);
+                    pictureSearchKeywords.add(jsonObject1.getString("word"));
+                }
+                ArrayList<String> searchPictureResults = PictureSearcher.getInstance().addPictureToNews(pictureSearchKeywords);
+                picses = new String[searchPictureResults.size()];
+                for (int i=0;i<searchPictureResults.size();i++) picses[i] = searchPictureResults.get(i);
+                //picses = setPictures(pictureSearchResults);
+            }
             int count = 0;
             for (String pic : picses) {
                 count ++;
@@ -135,6 +145,7 @@ public class NewsDetail extends News {
                     e.printStackTrace();
                 }
             }// It's too complicated
+
             /*
             save pics to local and save paths to picturesLocal
              */
