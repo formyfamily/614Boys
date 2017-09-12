@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import activity.R;
+import controller.NewsRecommender;
 import fragment.main_newsrecycle.DividerItemDecoration;
 import fragment.main_newsrecycle.NewsAdapter;
 import news.NewsProxy;
@@ -29,6 +30,7 @@ public class NewsNormalFragment extends Fragment {
     RecyclerView newsView;
     LinearLayoutManager layoutManager;
     Context mContext ;
+    int typeId ; // 0 -> favourite, 1 -> recommend
 
     public void setContext(Context context) {mContext = context ;}
 
@@ -36,7 +38,7 @@ public class NewsNormalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main_news_normal_pageview, container, false);
 
-        mNewsAdapter = new NewsAdapter(mContext, newsProxy.getDisplayNews(0));
+        mNewsAdapter = new NewsAdapter(mContext, NewsRecommender.getInstance().getRecommendedNews(), 0);
         mNewsAdapter.resources = getResources();
         newsView = (RecyclerView) view.findViewById(R.id.main_recyclerView);
         layoutManager = new LinearLayoutManager(inflater.getContext());
@@ -54,7 +56,7 @@ public class NewsNormalFragment extends Fragment {
 
     public void update() {
         if(mNewsAdapter == null) return ;
-        mNewsAdapter.datas = newsProxy.getDisplayNews(0);
+        mNewsAdapter.datas = NewsRecommender.getInstance().getRecommendedNews() ;
         mNewsAdapter.notifyDataSetChanged();
     }
     public static Fragment newInstance(int type){

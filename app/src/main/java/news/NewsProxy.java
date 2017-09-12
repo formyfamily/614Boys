@@ -28,6 +28,73 @@ import org.json.JSONObject;
 /**
  * Created by Administrator on 2017/9/5.
  */
+class InternetQueryThread extends Thread {
+    private String keywords;
+    private int classTagId;
+    private int page;
+    private ArrayList<News>[] newsAll;
+    private ArrayList<News> newsSearch;
+    private int perLoadNum;
+
+    public InternetQueryThread(String keywords, int classTagId, int page, ArrayList<News>[] newsAll, ArrayList<News> newsSearch, int perLoadNum) {
+        this.keywords = keywords;
+        this.classTagId = classTagId;
+        this.page = page;
+        this.newsAll = newsAll;
+        this.newsSearch = newsSearch;
+        this.perLoadNum = perLoadNum;
+    }
+
+    private int actualRead = 0;
+
+    public int getActualRead() {
+        return actualRead;
+    }
+
+    @Override
+    public void run() {
+        try {
+        URL url;
+        if (keywords.equals("")) {
+            if (classTagId == 0)
+                url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum);
+            else
+                url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum + "&category=" + classTagId);
+            }
+        else{
+            url = new URL("http://166.111.68.66:2042/news/action/query/search?keyword="+keywords+"&pageNo="+ page + "&pageSize=" + perLoadNum);
+        }
+        InputStream is = url.openStream();
+        StringBuffer out = new StringBuffer();
+        byte[] b = new byte[4096];
+        for (int n; (n = is.read(b)) != -1;) {
+            out.append(new String(b, 0, n));
+        }
+        String json = out.toString();
+        JSONObject jsonObject1 = new JSONObject(json);
+        JSONArray jsonArray = jsonObject1.getJSONArray("list");
+        ArrayList<News> currentList;
+        if (keywords.equals("")) currentList = newsAll[classTagId];
+        else currentList = newsSearch;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+            currentList.add(new News(jsonObject));
+        }
+        actualRead = jsonArray.length();
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            actualRead = 0;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            actualRead = 0;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            actualRead = 0;
+        }
+    }
+};
 
 public class NewsProxy {
     private static NewsProxy newsProxy;
@@ -97,56 +164,16 @@ public class NewsProxy {
         // It's too complicated
 
     }
-    private synchronized void addNewsOfPage(int page_, int classTagId_) {
+    private synchronized int addNewsOfPage(int page_, int classTagId_) {
         System.out.println("addNewsOfPage " + page_ );
-        final int page = page_;
-        final int classTagId = classTagId_;
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    URL url;
-                    if (keywords.equals("")) {
-                        if (classTagId == 0)
-                            url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum);
-                        else
-                            url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum + "&category=" + classTagId);
-                    }
-                    else{
-                        url = new URL("http://166.111.68.66:2042/news/action/query/search?keyword="+keywords+"&pageNo="+ page + "&pageSize=" + perLoadNum);
-                    }
-                    InputStream is = url.openStream();
-                    StringBuffer out = new StringBuffer();
-                    byte[] b = new byte[4096];
-                    for (int n; (n = is.read(b)) != -1;) {
-                        out.append(new String(b, 0, n));
-                    }
-                    String json = out.toString();
-                    JSONObject jsonObject1 = new JSONObject(json);
-                    JSONArray jsonArray = jsonObject1.getJSONArray("list");
-                    ArrayList<News> currentList;
-                    if (keywords.equals("")) currentList = newsAll[classTagId];
-                    else currentList = newsSearch;
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                        currentList.add(new News(jsonObject));
-                    }
-                } catch (MalformedURLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
+        InternetQueryThread thread = new InternetQueryThread(keywords,classTagId_,page_,newsAll,newsSearch,perLoadNum);
         try {
             thread.start();
             thread.join();
+            return(thread.getActualRead());
         } catch (InterruptedException e){
             e.printStackTrace();
+            return(0);
         }
     }
     public synchronized void update(int classTagId) {
@@ -157,26 +184,26 @@ public class NewsProxy {
         if (newsAll[classTagId] != null)
             newsAll[classTagId].clear();
         else newsAll[classTagId] = new ArrayList<News>();
-        size[classTagId] = perLoadNum;
-        displaySize[classTagId] = 20;
-        for (int i = 0; i < size[classTagId]; i += perLoadNum) {
-            addNewsOfPage(i / perLoadNum + 1, classTagId);
-        }
+        displaySize[classTagId] = perDisplayNum;
+        size[classTagId] = addNewsOfPage(1, classTagId);
     }
     public void moreNews(int classTagId) {
+        int actualReadSize;
         if (keywords.equals("")) {
-            while (displaySize[classTagId] + perDisplayNum > size[classTagId]) {
-                size[classTagId] += perLoadNum;
-                addNewsOfPage(size[classTagId] / perLoadNum, classTagId);
+            if (displaySize[classTagId] + perDisplayNum > size[classTagId]) {
+                actualReadSize = addNewsOfPage((size[classTagId]+perLoadNum-1) / perLoadNum + 1, classTagId);
+                size[classTagId] += actualReadSize;
             }
-            displaySize[classTagId] += perDisplayNum;
+            if (displaySize[classTagId] + perDisplayNum > size[classTagId]) displaySize[classTagId] = size[classTagId];
+            else displaySize[classTagId] += perDisplayNum;
         }
         else{
-            while (searchDisplaySize + perDisplayNum > searchSize) {
-                searchSize += perLoadNum;
-                addNewsOfPage(searchSize / perLoadNum, classTagId);
+            if (searchDisplaySize + perDisplayNum > searchSize) {
+                actualReadSize = addNewsOfPage((searchSize+perLoadNum-1) / perLoadNum + 1, classTagId);
+                searchSize += actualReadSize;
             }
-            searchDisplaySize += perDisplayNum;
+            if (searchDisplaySize + perDisplayNum > searchSize) searchDisplaySize = searchSize;
+            else searchDisplaySize += perDisplayNum;
         }
     }
 

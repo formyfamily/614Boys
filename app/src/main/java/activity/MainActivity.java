@@ -1,9 +1,12 @@
 package activity;
 
 import controller.NewsReciter;
+import controller.NewsSearcher;
+import fragment.main_newsrecycle.NewsAdapter;
 import fragment.main_slidingtab.MainTagEntity;
 import fragment.main_slidingtab.NewsNormalFragment;
 import fragment.main_slidingtab.NewsTagFragment;
+import controller.NewsRecommender;
 import news.* ;
 
 import android.content.Context;
@@ -27,6 +30,7 @@ import android.widget.TextView;
 import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(Gravity.LEFT) ;
             }
         }) ;
+
 
         // -- --- -- --- Setup Menu Botton Click Events
         final LinearLayout nightModeBotton = (LinearLayout)findViewById(R.id.night_mode_button) ;
@@ -135,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         // -- --- -- --- Setup SlidingTab
 
         newsTagFragment = new NewsTagFragment() ;
+        NewsSearcher.getInstance().setNewsTagFragment(newsTagFragment);
         favouriteFragment = new NewsNormalFragment() ;
         recommendFragment = new NewsNormalFragment() ;
         fragmentList = new ArrayList<Fragment>() ;
@@ -155,6 +161,16 @@ public class MainActivity extends AppCompatActivity {
 
         commonTabLayout = (CommonTabLayout)findViewById(R.id.main_tab_layout) ;
         commonTabLayout.setTabData(tabEntityList, this, R.id.main_tab_content, fragmentList) ;
+        commonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelect(int position) {
+                if(position == 1) favouriteFragment.update(); ;
+            }
+            @Override
+            public void onTabReselect(int position) {
+
+            }
+        });
     }
 
     @Override
@@ -169,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                NewsSearcher.getInstance().searchKeyWord(query);
                 return true;
             }
             @Override
@@ -176,9 +193,13 @@ public class MainActivity extends AppCompatActivity {
         });
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
-            public void onSearchViewShown() {}
+            public void onSearchViewShown() {
+                //NewsSearcher.getInstance().searchKeyWord("aewgewbawbablablablahah12y12985y1512"); // a magic random string which will filter all news
+            }
             @Override
-            public void onSearchViewClosed() {}
+            public void onSearchViewClosed() {
+                NewsSearcher.getInstance().finishSearching();
+            }
         });
         return true;
     }

@@ -33,6 +33,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static final int  FRESHING=1;
 
     private int load_more_status=0;
+    private int showFooter ;
     private static final int TYPE_ITEM = 0;  //普通Item View
     private static final int TYPE_FOOTER = 1;  //底部FootView
     private static final int TYPE_REFRESHER = 2;  //顶部RefreshView
@@ -41,9 +42,10 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public ArrayList<News> datas = null;
     public Resources resources = null ;
 
-    public NewsAdapter(Context context, ArrayList<News> datas) {
+    public NewsAdapter(Context context, ArrayList<News> datas, int showFooter) {
         this.mContext = context ;
         this.datas = datas;
+        this.showFooter = showFooter ;
     }
 
     @Override
@@ -75,7 +77,12 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ivh.mTextView.setText(ivh.news.getTitle());
            // ivh.mImageView.setImageBitmap(ivh.news.getFirstPicture());
             String dateString = ivh.news.getTime() ;
-            ivh.mItemInfo.setText(ivh.news.getSource()+"    "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8)) ;
+            try {
+                ivh.mItemInfo.setText(ivh.news.getSource() + "    " + dateString.substring(0, 4) + '-' + dateString.substring(4, 6) + '-' + dateString.substring(6, 8));
+            }
+            catch(Exception e) {
+                ivh.mItemInfo.setText(ivh.news.getSource() + "    " + dateString);
+            }
             if(ivh.news.isRead())
                 ivh.mTextView.setTextColor(resources.getColor(R.color.colorReaded));
             else
@@ -101,7 +108,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemViewType(int position) {
         // 最后一个item设置为footerView
-        if (position + 1 == getItemCount())
+        if (showFooter==1 && position + 1 == getItemCount())
             return TYPE_FOOTER;
         else
             return TYPE_ITEM;
@@ -122,7 +129,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return datas.size()+1;
+        return datas.size()+showFooter;
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {

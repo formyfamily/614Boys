@@ -66,8 +66,7 @@ public class NewsActivity extends AppCompatActivity {
         textView.setText(newsDetail.getContent());
         TextView infoView = (TextView)findViewById(R.id.news_info) ;
         String dateString = newsDetail.getTime() ;
-        infoView.setText(newsDetail.getSource()+"   "+dateString.substring(0, 4)+'-'+dateString.substring(4, 6)+'-'+dateString.substring(6, 8));
-
+        infoView.setText(newsDetail.getSource() + "    " + dateString) ;
         ListView pictureListView = (ListView)findViewById(R.id.news_picture_listview) ;
         pictureListView.setAdapter(new NewsImageAdapter(NewsActivity.this, newsDetail));
 
@@ -122,7 +121,7 @@ public class NewsActivity extends AppCompatActivity {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<String> keywords = new NewsRecommender().getRecommendedWords();
+
             }
         });
     }

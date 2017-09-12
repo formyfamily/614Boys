@@ -40,7 +40,7 @@ public class NewsFragment extends Fragment {
         View view = inflater.inflate(R.layout.main_news_tag_refreshlayout, container, false);
 
         lastVisibleItem = 0;
-        smallAdapter = new NewsAdapter(mContext, newsProxy.getDisplayNews(tagId));
+        smallAdapter = new NewsAdapter(mContext, newsProxy.getDisplayNews(tagId), 1);
         smallAdapter.resources = getResources();
         newsView = (RecyclerView) view.findViewById(R.id.main_recyclerView);
         layoutManager = new LinearLayoutManager(inflater.getContext());
