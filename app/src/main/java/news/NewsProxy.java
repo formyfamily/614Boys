@@ -184,8 +184,9 @@ public class NewsProxy {
         if (newsAll[classTagId] != null)
             newsAll[classTagId].clear();
         else newsAll[classTagId] = new ArrayList<News>();
-        displaySize[classTagId] = perDisplayNum;
         size[classTagId] = addNewsOfPage(1, classTagId);
+        if (size[classTagId] >= perDisplayNum) displaySize[classTagId] = perDisplayNum;
+        else displaySize[classTagId] = size[classTagId];
     }
     public void moreNews(int classTagId) {
         int actualReadSize;
