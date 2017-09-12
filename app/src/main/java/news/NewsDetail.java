@@ -71,6 +71,12 @@ public class NewsDetail extends News {
     public static void setThisActivity(Activity activity) {thisActivity = activity;}
     public String getCategory() {return category;}
     public String getContent() {return content;}
+    public String getRealContent() {
+        String realContent = new String(content);
+        realContent = realContent.replaceAll("<[^<>]*>" ,"");
+        realContent = realContent.replaceAll("nbsp" ,"");
+        return realContent;
+    }
     public String getJournal() {return  journal;}
     public ArrayList<String> getPicturesLocal() {return picturesLocal;}
     public void setCategory(String category_) {category = category_;}

@@ -101,7 +101,7 @@ public class NewsActivity extends AppCompatActivity {
                     reciteButton.setLabelText("语音播放");
                 }
                 else {
-                    reciter1.speakText(newsDetail.getTitle()+'\n'+newsDetail.getContent());
+                    reciter1.speakText(newsDetail.getTitle()+'\n'+newsDetail.getRealContent());
                     reciteButton.setLabelText("停止播放");
                 }
                 reciter1.hasStarted = !reciter1.hasStarted;
