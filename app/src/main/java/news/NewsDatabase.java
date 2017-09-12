@@ -37,9 +37,7 @@ public class NewsDatabase {
     public void setThisActivity(Activity activity) { thisActivity = activity;}
     public boolean check(String id) {
         SQLiteDatabase for_search = DatabaseHelper.getDbHelper().getReadableDatabase();
-        String[] argList=new String[1];
-        argList[0]=id;
-        Cursor cursor = for_search.query("newsHistory",new String[]{"id"},"id=?",argList,null,null,null);
+        Cursor cursor = for_search.query("newsHistory",new String[]{"id"},"id=?",new String[]{id},null,null,null);
         if (cursor.moveToNext()) return(true);
         else return(false);
     }
@@ -122,7 +120,7 @@ public class NewsDatabase {
         }
         if (!picturesS.equals("")) {
             picturesS = picturesS.substring(0, picturesS.length() - 3);
-            picturesLocalS = picturesLocalS.substring(0, picturesS.length() - 3);
+            picturesLocalS = picturesLocalS.substring(0, picturesLocalS.length() - 3);
         }
         cv.put("pictures", picturesS);
         cv.put("picturesLocal",picturesLocalS);

@@ -26,6 +26,42 @@ import java.util.regex.Pattern;
  * Created by Administrator on 2017/9/7.
  */
 
+class InternetQueryThread3 extends Thread {
+    private NewsDetail newsDetail;
+    private NewsNLP newsNLP;
+    private Activity thisActivity;
+    private String id;
+    private boolean success = false;
+    public InternetQueryThread3(NewsDetail newsDetail, NewsNLP newsNLP, String id,Activity thisActivity){
+        this.newsDetail = newsDetail;
+        this.newsNLP = newsNLP;
+        this.id = id;
+        this.thisActivity = thisActivity;
+    }
+    @Override
+    public void run() {
+        try {
+            URL url = new URL("http://166.111.68.66:2042/news/action/query/detail?newsId=" + id);
+            InputStream is = url.openStream();
+            StringBuffer out = new StringBuffer();
+            byte[] b = new byte[4096];
+            for (int n; (n = is.read(b)) != -1;) {
+                out.append(new String(b, 0, n));
+            }
+            String json = out.toString();
+            JSONObject jsonObject = new JSONObject(json);
+            NewsDetail.setThisActivity(thisActivity);
+            newsDetail.setByJsonObject(jsonObject);
+            newsNLP.setByJsonObject(jsonObject);
+            success = true;
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    public boolean getSuccess(){return success;}
+};
+
 public class NewsDetail extends News {
     private String category;
     private String content;
@@ -172,6 +208,7 @@ public class NewsDetail extends News {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return;
     }
     public static NewsDetail getNewsDetailById(final String id) {
         if (NewsDatabase.getInstance().check(id)) {
@@ -179,39 +216,14 @@ public class NewsDetail extends News {
         } else { //grab it from internet and save it to datebase
             final NewsDetail newsDetail = new NewsDetail();
             final NewsNLP newsNLP = new NewsNLP();
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        URL url = new URL("http://166.111.68.66:2042/news/action/query/detail?newsId=" + id);
-                        InputStream is = url.openStream();
-                        StringBuffer out = new StringBuffer();
-                        byte[] b = new byte[4096];
-                        for (int n; (n = is.read(b)) != -1;) {
-                            out.append(new String(b, 0, n));
-                        }
-                        String json = out.toString();
-                        JSONObject jsonObject = new JSONObject(json);
-                        NewsDetail.setThisActivity(thisActivity);
-                        newsDetail.setByJsonObject(jsonObject);
-                        newsNLP.setByJsonObject(jsonObject);
-                    } catch (MalformedURLException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
+            InternetQueryThread3 thread = new InternetQueryThread3(newsDetail,newsNLP,id,thisActivity);
             try {
                 thread.start();
                 thread.join();
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
+            if (thread.getSuccess() == false) return(null);
             NewsDatabase.getInstance().saveNewsDetail(newsDetail);
             NewsDatabase.getInstance().saveNewsNLP(newsNLP);
             return newsDetail;

@@ -16,8 +16,9 @@ public class NewsReader {
     public static NewsReader getInstance() {return newsReader ;}
     public void readNews(final News news, final Context mContext, final NewsAdapter newsAdapter)
     {
-        NewsDetail.getNewsDetailById(news.getId()) ;
-        newsAdapter.notifyDataSetChanged();
-        ((MainActivity)mContext).createNewNewsActivity(news) ;
+        if (NewsDetail.getNewsDetailById(news.getId()) != null) {
+            newsAdapter.notifyDataSetChanged();
+            ((MainActivity) mContext).createNewNewsActivity(news);
+        }
     }
 }
