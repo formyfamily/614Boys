@@ -18,6 +18,8 @@ import java.util.Map;
 
 import activity.MainActivity;
 
+import static news.News.getNoPictureMode;
+
 /**
  * Created by Administrator on 2017/9/7.
  */
@@ -45,28 +47,9 @@ public class NewsDatabase {
         if (!check(id))
             return null;
         NewsDetail newsDetail = new NewsDetail();
-        /*
-        newsDetail.setCategory("");
-        newsDetail.setContent("");
-        newsDetail.setJournal("");
-        newsDetail.setPicturesLocal(new ArrayList<String>());
-        newsDetail.setPictures(new ArrayList<String>());
-        newsDetail.setAuthor("");
-        newsDetail.setLangType("");
-        newsDetail.setClassTag("");//have set classtagid inside
-        newsDetail.setId(id);
-        newsDetail.setIntro("");
-        newsDetail.setSource("");
-        newsDetail.setTime("");
-        newsDetail.setTitle("");
-        newsDetail.setUrl("");
-        newsDetail.setVideo("");
-        */
-        SQLiteDatabase db = DatabaseHelper.getDbHelper().getReadableDatabase();
-        String[] argList = new String[1];
-        argList[0] = id;
-        Cursor cursor = db.query("newsHistory", new String[]{"id","category","content","journal","picturesLocal",
-        "pictures","author","langType","classTag","intro","source","time","title","url","video"}, "id=?", argList, null, null, null);
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
+        Cursor cursor = db.query("newsHistory", new String[]{"id","category","content","journal","picturesLocal", "pictures", "author",
+                "langType","classTag","intro","source","time","title","url","video","noPictureMode"}, "id=?", new String[]{id}, null, null, null);
         if (cursor.moveToNext()){
             newsDetail.setCategory(cursor.getString(cursor.getColumnIndex("category")));
             newsDetail.setContent (cursor.getString(cursor.getColumnIndex("content")));
@@ -78,9 +61,6 @@ public class NewsDatabase {
             for (int i=0;i<picturesS.length;i++) picturesA.add(picturesS[i]);
             newsDetail.setPictures(picturesA);
             String[] picturesLocalS = cursor.getString(cursor.getColumnIndex("picturesLocal")).split(splitStr);
-            ArrayList<String> picturesLocalA = new ArrayList<String>();
-            for (int i=0;i<picturesLocalS.length;i++) picturesLocalA.add(picturesLocalS[i]);
-            newsDetail.setPicturesLocal(picturesLocalA);
             newsDetail.setAuthor(cursor.getString(cursor.getColumnIndex("author")));
             newsDetail.setLangType(cursor.getString(cursor.getColumnIndex("langType")));
             newsDetail.setClassTag(cursor.getString(cursor.getColumnIndex("classTag")));
@@ -91,6 +71,34 @@ public class NewsDatabase {
             newsDetail.setTitle(cursor.getString(cursor.getColumnIndex("title")));
             newsDetail.setUrl(cursor.getString(cursor.getColumnIndex("url")));
             newsDetail.setVideo(cursor.getString(cursor.getColumnIndex("video")));
+            ArrayList<String> picturesLocalA = new ArrayList<String>();
+            if (cursor.getInt(cursor.getColumnIndex("noPictureMode")) == 1) {    // We haven't downloaded pictures
+                if (getNoPictureMode() == false) {           // Now we download
+                    int count = 0;
+                    for (String urlStr : picturesS) {
+                        count++;
+                        DownloadPictureThread thread = new DownloadPictureThread(urlStr, thisActivity, picturesLocalA, id, count);
+                        try {
+                            thread.start();
+                            thread.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    String newPicturesLocal = "";
+                    for (String e:picturesLocalA) newPicturesLocal += e + splitStr;
+                    if (!newPicturesLocal.equals("")) newPicturesLocal = newPicturesLocal.substring(0,newPicturesLocal.length()-3);
+                    ContentValues values = new ContentValues();
+                    values.put("picturesLocal",newPicturesLocal);
+                    values.put("noPictureMode",0);
+                    db.update("newsHistory",values,"id=?",new String[]{id});
+                }
+                newsDetail.setPicturesLocal(picturesLocalA);
+            }
+            else {
+                for (int i = 0; i < picturesLocalS.length; i++) picturesLocalA.add(picturesLocalS[i]);
+                newsDetail.setPicturesLocal(picturesLocalA);
+            }
             return newsDetail;
         }
         else return(null);
@@ -114,12 +122,16 @@ public class NewsDatabase {
         Iterator<String> it2 = picturesB.iterator();
         while (it1.hasNext()){
             String currentURL = it1.next();
-            String currentURLLocal = it2.next();
             picturesS += currentURL + splitStr;
+        }
+        while (it2.hasNext()){
+            String currentURLLocal = it2.next();
             picturesLocalS += currentURLLocal + splitStr;   // newsId is used to seperate images in different folders.
         }
         if (!picturesS.equals("")) {
             picturesS = picturesS.substring(0, picturesS.length() - 3);
+        }
+        if (!picturesLocalS.equals("")){
             picturesLocalS = picturesLocalS.substring(0, picturesLocalS.length() - 3);
         }
         cv.put("pictures", picturesS);
@@ -134,8 +146,10 @@ public class NewsDatabase {
         cv.put("title", newsDetail.getTitle());
         cv.put("url", newsDetail.getUrl());
         cv.put("video", newsDetail.getVideo());
+        int noPictureMode = 0;
+        if (getNoPictureMode()) noPictureMode = 1;
+        cv.put("noPictureMode",noPictureMode);
         db.insert("newsHistory", null, cv);
-        db.close();
     }
 
     public boolean isFavorite(String id){
@@ -156,6 +170,23 @@ public class NewsDatabase {
             values.put("id", id);
             db.insert("favorite", null, values);
         }
+    }
+
+    public ArrayList<News> getAllFavorite(){
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from favorite",null);
+        ArrayList<News> newses = new ArrayList<News>();
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String id = cursor.getString(cursor.getColumnIndex("id"));
+                NewsDetail newsDetail = getNewsDetailById(id);
+                if (newsDetail != null){
+                    newses.add((News)newsDetail);
+                }
+                cursor.moveToNext();
+            }
+        }
+        return(newses);
     }
 
     public void saveNewsNLP(NewsNLP newsNLP) {

@@ -44,7 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         System.out.println("Creating database");
         db.execSQL("create table if not exists newsHistory (id text primary key, category text, content text, journal text," +
                 "picturesLocal text, pictures text, author text, langType text, classTag text, intro text, source text," +
-                "time text, title text, url text, video text)");
+                "time text, title text, url text, video text, noPictureMode integer)");
         db.execSQL("create table if not exists favorite (id text primary key)");
         db.execSQL("create table if not exists NLP (word text primary key, score double)");
 
