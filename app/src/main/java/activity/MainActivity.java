@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                NewsProxy.getInstance().finish_searching();
                 NewsSearcher.getInstance().searchKeyWord(query);
                 return true;
             }

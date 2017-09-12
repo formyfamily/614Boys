@@ -33,15 +33,13 @@ class InternetQueryThread extends Thread {
     private int classTagId;
     private int page;
     private ArrayList<News>[] newsAll;
-    private ArrayList<News> newsSearch;
     private int perLoadNum;
 
-    public InternetQueryThread(String keywords, int classTagId, int page, ArrayList<News>[] newsAll, ArrayList<News> newsSearch, int perLoadNum) {
+    public InternetQueryThread(String keywords, int classTagId, int page, ArrayList<News>[] newsAll, int perLoadNum) {
         this.keywords = keywords;
         this.classTagId = classTagId;
         this.page = page;
         this.newsAll = newsAll;
-        this.newsSearch = newsSearch;
         this.perLoadNum = perLoadNum;
     }
 
@@ -54,44 +52,44 @@ class InternetQueryThread extends Thread {
     @Override
     public void run() {
         try {
-        URL url;
-        if (keywords.equals("")) {
-            if (classTagId == 0)
-                url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum);
-            else
-                url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum + "&category=" + classTagId);
+            URL url;
+            if (keywords.equals("")) {
+                if (classTagId == 0)
+                    url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum);
+                else
+                    url = new URL("http://166.111.68.66:2042/news/action/query/latest?pageNo=" + page + "&pageSize=" + perLoadNum + "&category=" + classTagId);
             }
-        else{
-            url = new URL("http://166.111.68.66:2042/news/action/query/search?keyword="+keywords+"&pageNo="+ page + "&pageSize=" + perLoadNum);
-        }
-        InputStream is = url.openStream();
-        StringBuffer out = new StringBuffer();
-        byte[] b = new byte[4096];
-        for (int n; (n = is.read(b)) != -1;) {
-            out.append(new String(b, 0, n));
-        }
-        String json = out.toString();
-        JSONObject jsonObject1 = new JSONObject(json);
-        JSONArray jsonArray = jsonObject1.getJSONArray("list");
-        ArrayList<News> currentList;
-        if (keywords.equals("")) currentList = newsAll[classTagId];
-        else currentList = newsSearch;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            currentList.add(new News(jsonObject));
-        }
-        actualRead = jsonArray.length();
+            else{
+                if (classTagId == 0)
+                    url = new URL("http://166.111.68.66:2042/news/action/query/search?keyword="+keywords+"&pageNo="+ page + "&pageSize=" + perLoadNum);
+                else
+                    url = new URL("http://166.111.68.66:2042/news/action/query/search?keyword="+keywords+"&pageNo="+ page + "&pageSize=" + perLoadNum + "&category=" + classTagId);
+            }
+            InputStream is = url.openStream();
+            StringBuffer out = new StringBuffer();
+            byte[] b = new byte[4096];
+            for (int n; (n = is.read(b)) != -1;) {
+                out.append(new String(b, 0, n));
+            }
+            String json = out.toString();
+            JSONObject jsonObject1 = new JSONObject(json);
+            JSONArray jsonArray = jsonObject1.getJSONArray("list");
+            ArrayList<News> currentList;
+            if (keywords.equals("")) currentList = newsAll[classTagId];
+            else currentList = newsAll[classTagId + 13];                // Ugly
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                currentList.add(new News(jsonObject));
+                actualRead ++;
+            }
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            actualRead = 0;
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            actualRead = 0;
         } catch (JSONException e) {
             e.printStackTrace();
-            actualRead = 0;
         }
     }
 };
@@ -100,13 +98,12 @@ public class NewsProxy {
     private static NewsProxy newsProxy;
     private int size[];
     private int displaySize[];
-    private static final int perLoadNum = 20;
+    private int hasRead[];
+    private static final int perLoadNum = 100;
     private static final int perDisplayNum = 20;
-    private static final int newsProxyNum = 13;
+    private static final int newsProxyNumSmall = 13;
+    private static final int newsProxyNumBig = 26;
     private String keywords = "";
-    private int searchSize = 0;
-    private int searchDisplaySize = 0;
-    private ArrayList<News> newsSearch;
     private Activity thisActivity;
     public Bitmap notFoundBitmap;
     private ArrayList<News> newsAll[];
@@ -114,14 +111,16 @@ public class NewsProxy {
     public static synchronized NewsProxy getInstance() {
         if (newsProxy == null) {
             newsProxy = new NewsProxy();
-            newsProxy.size = new int[newsProxyNum];
-            newsProxy.displaySize =  new int[newsProxyNum];
-            newsProxy.newsAll = new ArrayList[newsProxyNum];
-            newsProxy.newsSearch = new ArrayList<News>();
-            for (int i = 0 ; i < newsProxyNum; i++){
-                newsProxy.size[i] = perLoadNum;
-                newsProxy.displaySize[i] = perDisplayNum;
-                newsProxy.update(i);
+            newsProxy.size = new int[newsProxyNumBig];
+            newsProxy.displaySize =  new int[newsProxyNumBig];
+            newsProxy.hasRead = new int[newsProxyNumBig];
+            newsProxy.newsAll = new ArrayList[newsProxyNumBig];
+            for (int i = 0 ; i < newsProxyNumBig; i++){
+                newsProxy.size[i] = 0;
+                newsProxy.displaySize[i] = 0;
+                newsProxy.hasRead[i]=0;
+                newsProxy.newsAll[i] = new ArrayList<News>();
+                if (i < newsProxyNumSmall) newsProxy.update(i);
             }
         }
         return newsProxy;
@@ -135,38 +134,26 @@ public class NewsProxy {
             e.printStackTrace();
         }
     }
-    public int getDisplaySize(int classTagId) {
-        if (keywords.equals("")) return  displaySize[classTagId];
-        else return(searchDisplaySize);
+    private int getRealIndex(int classTagId){
+        int result = classTagId = classTagId;
+        if (!keywords.equals("")) result += newsProxyNumSmall;
+        return(result);
     }
-    public void setDisplaySize(int classTagId, int displaySize) {
-        if (keywords.equals("")) this.displaySize[classTagId] = displaySize;
-        else searchDisplaySize = displaySize;
+    public int getDisplaySize(int classTagId) {
+        int index = getRealIndex(classTagId);
+        return(displaySize[index]);
     }
     public ArrayList<News> getDisplayNews(int classTagId) {
         ArrayList<News> sublist = new ArrayList<News>();
-        System.out.printf("displaysize[%d] = %d size[%d] = %d \n", classTagId ,displaySize[classTagId], classTagId, size[classTagId]);
-        System.out.printf("now size[%d] = %d \n", classTagId, newsAll[classTagId].size());
-       // try {
-        if (keywords.equals("")) {
-            for (int i = 0; i < displaySize[classTagId]; i++)
-                sublist.add(newsAll[classTagId].get(i));
-        }
-        else{
-            for (int i = 0; i < searchDisplaySize; i++)
-                sublist.add(newsSearch.get(i));
-        }
-       // } catch (IndexOutOfBoundsException e) {
-          //  e.printStackTrace();
-      //  }
+        int index = getRealIndex(classTagId);
+        for (int i = 0; i < displaySize[index]; i++)
+            sublist.add(newsAll[index].get(i));
         return sublist;
-
-        // It's too complicated
-
     }
+
     private synchronized int addNewsOfPage(int page_, int classTagId_) {
         System.out.println("addNewsOfPage " + page_ );
-        InternetQueryThread thread = new InternetQueryThread(keywords,classTagId_,page_,newsAll,newsSearch,perLoadNum);
+        InternetQueryThread thread = new InternetQueryThread(keywords,classTagId_,page_,newsAll,perLoadNum);
         try {
             thread.start();
             thread.join();
@@ -181,6 +168,7 @@ public class NewsProxy {
          update the newslist to the newest size news
          */
         Log.d("NewsProxy","update()!!!!");
+        if (!keywords.equals("")) return;
         if (newsAll[classTagId] != null)
             newsAll[classTagId].clear();
         else newsAll[classTagId] = new ArrayList<News>();
@@ -190,22 +178,14 @@ public class NewsProxy {
     }
     public void moreNews(int classTagId) {
         int actualReadSize;
-        if (keywords.equals("")) {
-            if (displaySize[classTagId] + perDisplayNum > size[classTagId]) {
-                actualReadSize = addNewsOfPage((size[classTagId]+perLoadNum-1) / perLoadNum + 1, classTagId);
-                size[classTagId] += actualReadSize;
-            }
-            if (displaySize[classTagId] + perDisplayNum > size[classTagId]) displaySize[classTagId] = size[classTagId];
-            else displaySize[classTagId] += perDisplayNum;
+        int index = getRealIndex(classTagId);
+        if (displaySize[index] + perDisplayNum > size[index]) {
+            actualReadSize = addNewsOfPage(hasRead[index] + 1, classTagId);
+            size[index] += actualReadSize;
+            hasRead[index] += (int)Math.ceil(actualReadSize/perLoadNum);
         }
-        else{
-            if (searchDisplaySize + perDisplayNum > searchSize) {
-                actualReadSize = addNewsOfPage((searchSize+perLoadNum-1) / perLoadNum + 1, classTagId);
-                searchSize += actualReadSize;
-            }
-            if (searchDisplaySize + perDisplayNum > searchSize) searchDisplaySize = searchSize;
-            else searchDisplaySize += perDisplayNum;
-        }
+        if (displaySize[index] + perDisplayNum > size[index]) displaySize[index] = size[index];
+        else displaySize[index] += perDisplayNum;
     }
 
     public void setKeywords(String keywords) {
@@ -216,8 +196,12 @@ public class NewsProxy {
     }
     public void finish_searching() {
         keywords = "";
-        searchDisplaySize = 0;
-        searchSize = 0;
+        for (int i=newsProxyNumSmall;i<newsProxyNumBig;i++) {
+            displaySize[i] = 0;
+            size[i] = 0;
+            hasRead[i] = 0;
+            newsAll[i].clear();
+        }
     }
 }
 

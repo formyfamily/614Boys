@@ -51,8 +51,8 @@ class InternetQueryThread3 extends Thread {
             String json = out.toString();
             JSONObject jsonObject = new JSONObject(json);
             NewsDetail.setThisActivity(thisActivity);
-            newsNLP.setByJsonObject(jsonObject);
-            newsDetail.setByJsonObject(jsonObject);
+            if (!newsNLP.setByJsonObject(jsonObject)) return;
+            if (!newsDetail.setByJsonObject(jsonObject)) return;
             success = true;
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -84,7 +84,7 @@ public class NewsDetail extends News {
     public void setJournal(String journal_) {journal = journal_;}
     public void setPicturesLocal(ArrayList<String> picturesLocal_) {picturesLocal = picturesLocal_;}
     NewsDetail() {}
-    public void setByJsonObject(JSONObject jsonObject) {
+    public boolean setByJsonObject(JSONObject jsonObject) {
         try {
             setClassTag(jsonObject.getString("newsClassTag"));
             setAuthor(jsonObject.getString("news_Author"));
@@ -184,17 +184,15 @@ public class NewsDetail extends News {
                     thread.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    return(false);
                 }
             }// It's too complicated
 
-            /*
-            save pics to local and save paths to picturesLocal
-             */
-
         } catch (JSONException e) {
             e.printStackTrace();
+            return(false);
         }
-        return;
+        return(true);
     }
     public static NewsDetail getNewsDetailById(final String id) {
         if (NewsDatabase.getInstance().check(id)) {
