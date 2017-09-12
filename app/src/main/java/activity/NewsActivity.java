@@ -7,11 +7,13 @@ import controller.NewsSharer;
 import controller.NewsRecommender;
 import news.* ;
 
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -19,6 +21,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,6 +33,8 @@ import java.util.ArrayList;
 
 public class NewsActivity extends AppCompatActivity {
     NewsDetail newsDetail ;
+    NewsImageAdapter newsImageAdapter ;
+    RecyclerView pictureListView ;
     CollapsingToolbarLayout collapsingToolbar ;
     com.github.clans.fab.FloatingActionButton favouriteButton ;
     com.github.clans.fab.FloatingActionButton reciteButton ;
@@ -56,6 +61,10 @@ public class NewsActivity extends AppCompatActivity {
 
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(newsDetail.getTitle());
+        ImageView titleImage = (ImageView)findViewById(R.id.news_firstimage) ;
+        try {
+            titleImage.setImageBitmap(newsDetail.getPictureList().get(0));
+        } catch (Exception e) {}
 
         TextView titleView = (TextView)findViewById(R.id.news_title) ;
         titleView.setText(newsDetail.getTitle());
@@ -67,11 +76,10 @@ public class NewsActivity extends AppCompatActivity {
         String dateString = newsDetail.getTime() ;
         infoView.setText(newsDetail.getSource() + "    " + dateString) ;
 
-        RecyclerView pictureListView = (RecyclerView)findViewById(R.id.news_picture_recycleview) ;
-        pictureListView.setAdapter(new NewsImageAdapter(NewsActivity.this, newsDetail));
-        ViewGroup.LayoutParams params = pictureListView.getLayoutParams();
-        params.height = 40 + (260*pictureListView.getAdapter().getItemCount());
-        pictureListView.setLayoutParams(params);
+        pictureListView = (RecyclerView)findViewById(R.id.news_picture_recycleview) ;
+        pictureListView.setLayoutManager(new LinearLayoutManager(this)) ;
+        newsImageAdapter = new NewsImageAdapter(NewsActivity.this, newsDetail) ;
+        pictureListView.setAdapter(newsImageAdapter);
 
         favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
         setFavouriteButtonState(newsDetail.isFavorite());
@@ -87,7 +95,6 @@ public class NewsActivity extends AppCompatActivity {
         reciteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)  {
-                /*
                 NewsReciter reciter1 = NewsReciter.getInstance();
                 if (reciter1.hasStarted) {
                     reciter1.stopSpeaking();
@@ -98,9 +105,6 @@ public class NewsActivity extends AppCompatActivity {
                     reciteButton.setLabelText("停止播放");
                 }
                 reciter1.hasStarted = !reciter1.hasStarted;
-                */
-                ArrayList<News> newses = NewsDatabase.getInstance().getAllFavorite();
-                return;
             }
         });
         shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;

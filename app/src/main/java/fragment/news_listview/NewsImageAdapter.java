@@ -84,12 +84,12 @@ public class NewsImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         NewsImageAdapter.ItemViewHolder ivh = (NewsImageAdapter.ItemViewHolder)viewHolder ;
-        ivh.mImageView.setImageBitmap(datas.get(position)) ;
+        ivh.mImageView.setImageBitmap(datas.get(position+1)) ;
     }
 
     @Override
     public int getItemCount() {
-        return datas.size() ;
+        return datas.size()-1 ;
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
