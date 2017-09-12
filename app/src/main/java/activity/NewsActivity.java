@@ -1,6 +1,6 @@
 package activity;
 
-import fragment.tag_listview.NewsImageAdapter;
+import fragment.news_listview.NewsImageAdapter;
 import controller.NewsFavourite;
 import controller.NewsReciter;
 import controller.NewsSharer;
@@ -12,9 +12,11 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,7 +30,8 @@ public class NewsActivity extends AppCompatActivity {
     NewsDetail newsDetail ;
     CollapsingToolbarLayout collapsingToolbar ;
     com.github.clans.fab.FloatingActionButton favouriteButton ;
-
+    com.github.clans.fab.FloatingActionButton reciteButton ;
+    com.github.clans.fab.FloatingActionButton shareButton ;
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +55,6 @@ public class NewsActivity extends AppCompatActivity {
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(newsDetail.getTitle());
 
-        /*fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
         TextView titleView = (TextView)findViewById(R.id.news_title) ;
         titleView.setText(newsDetail.getTitle());
         TextView textView = (TextView)findViewById(R.id.news_text) ;
@@ -67,8 +62,12 @@ public class NewsActivity extends AppCompatActivity {
         TextView infoView = (TextView)findViewById(R.id.news_info) ;
         String dateString = newsDetail.getTime() ;
         infoView.setText(newsDetail.getSource() + "    " + dateString) ;
-        ListView pictureListView = (ListView)findViewById(R.id.news_picture_listview) ;
+
+        RecyclerView pictureListView = (RecyclerView)findViewById(R.id.news_picture_recycleview) ;
         pictureListView.setAdapter(new NewsImageAdapter(NewsActivity.this, newsDetail));
+        /*ViewGroup.LayoutParams params = pictureListView.getLayoutParams();
+        params.height = 40 + (260*pictureListView.getAdapter().getItemCount());
+        pictureListView.setLayoutParams(params);*/
 
         favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
         setFavouriteButtonState(newsDetail.isFavorite());
@@ -80,7 +79,7 @@ public class NewsActivity extends AppCompatActivity {
             }
         });
 
-        final com.github.clans.fab.FloatingActionButton reciteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_voice) ;
+        reciteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_voice) ;
         reciteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)  {
@@ -96,7 +95,7 @@ public class NewsActivity extends AppCompatActivity {
                 reciter1.hasStarted = !reciter1.hasStarted;
             }
         });
-        final com.github.clans.fab.FloatingActionButton shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
+        shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)  {
@@ -116,13 +115,5 @@ public class NewsActivity extends AppCompatActivity {
             favouriteButton.setColorNormal(getResources().getColor(R.color.colorFavourite));
             favouriteButton.setColorPressed(getResources().getColor(R.color.colorFavoriteLight));
         }
-
-        com.github.clans.fab.FloatingActionButton shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 }
