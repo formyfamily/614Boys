@@ -1,10 +1,15 @@
 package controller;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
 
+import java.util.ArrayList;
+
+import news.DatabaseHelper;
 import news.News;
+import news.NewsDatabase;
 
 /**
  * Created by kzf on 2017/9/8.
@@ -26,5 +31,9 @@ public class NewsFavourite {
             news.setFavorite(true);
             new SVProgressHUD(mContext).showInfoWithStatus("收藏成功！");
         }
+    }
+
+    public void getAllFavoriteNews(){
+        ArrayList<News> newses = NewsDatabase.getInstance().getAllFavorite();
     }
 }

@@ -4,19 +4,27 @@ package controller;
  * Created by Administrator on 2017/9/10.
  */
 
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+
 import news.News;
 import android.content.Context;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
 
+import java.util.HashMap;
+
 import cn.sharesdk.onekeyshare.*;
+import news.NewsDetail;
 
 public class NewsSharer {
     private NewsSharer() {} ;
     private static NewsSharer newsSharer = new NewsSharer() ;
     public static NewsSharer getInstance() {return newsSharer ;}
 
-    public void shareNews(Context mContext, News news) {
+    public void shareNews(Context mContext, NewsDetail news) {
+
         OnekeyShare oks = new OnekeyShare();
         //关闭sso授权
         oks.disableSSOWhenAuthorize();
@@ -31,8 +39,8 @@ public class NewsSharer {
 
         //oks.setPlatform(Platform.SHARE_WEBPAGE);
         oks.setText("【" + news.getTitle() + "】\n" + news.getUrl());
-        //if (news.getPictures().size() > 0)
-          //  oks.setImageUrl(news.getPictures().get(0));
+        if (news.getPicturesLocal().size() > 0)
+            oks.setImagePath(news.getPicturesLocal().get(0));
         //oks.setUrl(news.getUrl());
         // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
         // oks.setImagePath("/sdcard/test.jpg");//确保SDcard下面存在此张图片

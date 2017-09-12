@@ -14,6 +14,8 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +60,9 @@ public class NewsActivity extends AppCompatActivity {
         TextView titleView = (TextView)findViewById(R.id.news_title) ;
         titleView.setText(newsDetail.getTitle());
         TextView textView = (TextView)findViewById(R.id.news_text) ;
-        textView.setText(newsDetail.getContent());
+        textView.setText(Html.fromHtml(newsDetail.getContent()));
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textView.setClickable(true);
         TextView infoView = (TextView)findViewById(R.id.news_info) ;
         String dateString = newsDetail.getTime() ;
         infoView.setText(newsDetail.getSource() + "    " + dateString) ;
@@ -83,6 +87,7 @@ public class NewsActivity extends AppCompatActivity {
         reciteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)  {
+                /*
                 NewsReciter reciter1 = NewsReciter.getInstance();
                 if (reciter1.hasStarted) {
                     reciter1.stopSpeaking();
@@ -93,6 +98,9 @@ public class NewsActivity extends AppCompatActivity {
                     reciteButton.setLabelText("停止播放");
                 }
                 reciter1.hasStarted = !reciter1.hasStarted;
+                */
+                ArrayList<News> newses = NewsDatabase.getInstance().getAllFavorite();
+                return;
             }
         });
         shareButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_share) ;
