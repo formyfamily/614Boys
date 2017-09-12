@@ -98,29 +98,6 @@ public class NewsDetail extends News {
                 cur = m.end();
             }
             newContent = newContent + content.substring(cur, content.length()) + '\n';
-            /*
-            if (jsonObject.has("organizations")) {
-                JSONArray organizations = jsonObject.getJSONArray("organizations");
-                for (int i = 0; i < organizations.length(); i++) {
-                    JSONObject organization = organizations.getJSONObject(i);
-                    String aNewContent = new String();
-                    String word = organization.getString("word");
-                    System.out.println("word:" + word);
-                    Pattern aPattern = Pattern.compile(word);
-                    Matcher aMatcher = p.matcher(newContent);
-                    newContent = aMatcher.replaceAll("<a href = \'https://baike.baidu.com/item/" + word + "\'>" + word + "<\\a>");
-                }
-            }
-            */
-            /*
-            String testS = "我爱你";
-            String testSP = "爱";
-            Pattern testP = Pattern.compile(testSP);
-            Matcher testM = testP.matcher(testS);
-            while (testM.find()) {
-                System.out.println("group(): " + testM.group());
-            }
-            */
             if (jsonObject.has("persons")) {
                 JSONArray persons = jsonObject.getJSONArray("persons");
                 for (int i = 0; i < persons.length(); i++) {
@@ -161,7 +138,7 @@ public class NewsDetail extends News {
             setJournal(jsonObject.getString("news_Journal"));
             setSource(jsonObject.getString("news_Source"));
             String timeGet = jsonObject.getString("news_Time");
-            timeGet = timeGet.substring(0, 4) + "-" + timeGet.substring(4, 6) + "-" + timeGet.substring(6, 8);
+            //timeGet = timeGet.substring(0, 4) + "-" + timeGet.substring(4, 6) + "-" + timeGet.substring(6, 8);
             setTime(timeGet);
 
             setTitle(jsonObject.getString("news_Title"));
