@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public static Context mContext ;
 
     Toolbar toolbar ;
+    MenuItem searchMenu ;
     CommonTabLayout commonTabLayout ;
     ArrayList<Fragment> fragmentList ;
     ArrayList<CustomTabEntity> tabEntityList ;
@@ -200,8 +201,22 @@ public class MainActivity extends AppCompatActivity {
         commonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-                if(position == 1) recommendFragment.update();
-                if(position == 2) favouriteFragment.update() ;
+                if(position == 0)
+                {
+                    searchMenu.setVisible(true);
+                    newsTagAdapter.update();
+                }
+                if(position == 1)
+                {
+                    recommendFragment.update();
+                    searchMenu.setVisible(false);
+                }
+                if(position == 2)
+                {
+                    favouriteFragment.update() ;
+                    searchMenu.setVisible(false);
+                }
+
             }
             @Override
             public void onTabReselect(int position) {
@@ -213,9 +228,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_menu, menu);//指定Toolbar上的视图文件
-        MenuItem item = menu.findItem(R.id.action_search);
+        searchMenu = menu.findItem(R.id.action_search);
         MaterialSearchView searchView = (MaterialSearchView) findViewById(R.id.search_view);
-        searchView.setMenuItem(item);
+        searchView.setMenuItem(searchMenu);
         searchView.setCursorDrawable(R.drawable.custom_cursor);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
@@ -252,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                 if(tagChecked[i]) newsTagAdapter.addTag(i + 1);
             newsTagAdapter.notifyDataSetChanged();
             newsTagFragment.setAdapter(newsTagAdapter);
+            newsTagFragment.update();
       }
         else if(requestCode == 1) {
             newsTagAdapter.update();

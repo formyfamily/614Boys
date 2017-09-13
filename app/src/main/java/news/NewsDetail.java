@@ -232,43 +232,4 @@ public class NewsDetail extends News {
             return pictureList;
         }
     }
-
-    public ArrayList<News> getRelatedNews() {
-        if (getRecommendRelated() == false) return(new ArrayList<News>());
-        ArrayList<News> newses = new ArrayList<News>();
-        ArrayList<News> returnList = new ArrayList<News>();
-        final int loadNumber = 10;
-        final int returnNumber = 3;
-        InternetQueryThread thread = new InternetQueryThread(getTitle().replaceAll("[^\\u4e00-\\u9fa5_a-zA-Z0-9]",""),getClassTagId(),1,newses,loadNumber);
-        try {
-            thread.start();
-            thread.join();
-            int actualRead = thread.getActualRead();
-            String currentTitle = getTitle();
-            int count = 0;
-            for (int i = 0; i < Math.min(actualRead,loadNumber); i++) {
-                News thisNews = newses.get(i);
-                if (!TextHelper.sameNews(thisNews.getTitle(),currentTitle)) {
-                    boolean repeat = false;
-                    for (int j = 0; j < count; j++) {
-                        if (TextHelper.sameNews(thisNews.getTitle(),returnList.get(j).getTitle())) {
-                            repeat = true;
-                            break;
-                        }
-                    }
-                    if (repeat == false) {
-                        count++;
-                        returnList.add(thisNews);
-                    }
-                }
-                if (count == returnNumber) break;
-            }
-        }
-        catch(Exception e) {
-
-        }
-        finally {
-            return (returnList);
-        }
-    }
 }

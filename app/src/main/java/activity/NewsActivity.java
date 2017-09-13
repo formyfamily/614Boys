@@ -1,5 +1,6 @@
 package activity;
 
+import fragment.main_newsrecycle.NewsAdapter;
 import fragment.news_listview.NewsImageAdapter;
 import controller.NewsFavourite;
 import controller.NewsReciter;
@@ -60,8 +61,86 @@ class NewsDetailLoader extends AsyncTaskLoader<NewsDetail> {
         return mNewsDetail ;
     }
 }
+class NewsRecommendLoader extends AsyncTaskLoader<ArrayList<News>> {
+    CancellationSignal mCancellationSignal ;
+    private ArrayList<News> recommendNews ;
+    Context mContext ;
+    News mNews ;
 
-public class NewsActivity extends AppCompatActivity implements  LoaderManager.LoaderCallbacks<NewsDetail>  {
+    public NewsRecommendLoader(Context context, News news) {
+        super(context);
+        mContext = context ;
+        mNews = news ;
+    }
+
+    @Override
+    public void onStartLoading() {
+        super.onStartLoading();
+        forceLoad();
+    }
+    @Override
+    public ArrayList<News> loadInBackground() {
+        //if(isLoadInBackgroundCanceled())
+        //    throw new OperationCanceledException();
+        if(recommendNews == null)
+            recommendNews = mNews.getRelatedNews() ;
+        return recommendNews ;
+    }
+}
+
+class NewsDetailLoaderCallBack implements LoaderManager.LoaderCallbacks<NewsDetail> {
+    Context mContext ;
+
+    public NewsDetailLoaderCallBack(Context context)
+    {
+        super() ;
+        mContext = context ;
+    }
+    @Override
+    public Loader<NewsDetail> onCreateLoader(int id, Bundle args) {
+        NewsDetailLoader newsDetailLoader = new NewsDetailLoader(mContext) ;
+        newsDetailLoader.newsId = args.getString("newsId") ;
+        return newsDetailLoader ;
+    }
+    @Override
+    public void onLoadFinished(Loader<NewsDetail> loader, NewsDetail data)
+    {
+        ((NewsActivity)mContext).onNewsDetailLoadingFinished(data);
+    }
+    @Override
+    public void onLoaderReset(Loader<NewsDetail> loader)
+    {
+    }
+
+}
+class NewsRecommendLoadingCallback implements LoaderManager.LoaderCallbacks< ArrayList<News> > {
+    Context mContext ;
+    News mNews ;
+
+    public NewsRecommendLoadingCallback(Context context, News news)
+    {
+        super() ;
+        mNews = news ;
+        mContext = context ;
+    }
+    @Override
+    public Loader<ArrayList<News>> onCreateLoader(int id, Bundle args) {
+        NewsRecommendLoader newsRecommendLoader = new NewsRecommendLoader(mContext, mNews) ;
+        return newsRecommendLoader ;
+    }
+    @Override
+    public void onLoadFinished(Loader<ArrayList<News>> loader, ArrayList<News> data)
+    {
+        ((NewsActivity)mContext).onNewsRecommendLoadingFinished(data);
+    }
+    @Override
+    public void onLoaderReset(Loader<ArrayList<News>> loader)
+    {
+    }
+
+}
+
+public class NewsActivity extends AppCompatActivity   {
 
     public static News news ;
     NewsDetail newsDetail ;
@@ -73,30 +152,14 @@ public class NewsActivity extends AppCompatActivity implements  LoaderManager.Lo
     com.github.clans.fab.FloatingActionButton shareButton ;
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
 
-
-    @Override
-    public Loader<NewsDetail> onCreateLoader(int id, Bundle args) {
-        NewsDetailLoader newsDetailLoader = new NewsDetailLoader(NewsActivity.this) ;
-        newsDetailLoader.newsId = args.getString("newsId") ;
-        return newsDetailLoader ;
-    }
-    @Override
-    public void onLoadFinished(Loader<NewsDetail> loader, NewsDetail data)
-    {
-        NewsActivity.this.onLoadingFinished(data);
-    }
-    @Override
-    public void onLoaderReset(Loader<NewsDetail> loader)
-    {
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
         Bundle bundle = new Bundle() ;
         bundle.putString("newsId", getIntent().getStringExtra("News"));
-        getLoaderManager().initLoader(0, bundle, this) ;
+        getLoaderManager().initLoader(0, bundle, new NewsDetailLoaderCallBack(this)) ;
+        getLoaderManager().initLoader(1, bundle, new NewsRecommendLoadingCallback(this, news)) ;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.news_toolbar);
         setSupportActionBar(toolbar);
@@ -130,7 +193,7 @@ public class NewsActivity extends AppCompatActivity implements  LoaderManager.Lo
         }
     }
 
-    public void onLoadingFinished(NewsDetail newsDetail_)
+    public void onNewsDetailLoadingFinished(NewsDetail newsDetail_)
     {
         Toast.makeText(NewsActivity.this, "Load Complete", Toast.LENGTH_SHORT).show() ;
         newsDetail = newsDetail_ ;
@@ -192,4 +255,13 @@ public class NewsActivity extends AppCompatActivity implements  LoaderManager.Lo
         });
     }
 
+    public void onNewsRecommendLoadingFinished(ArrayList<News> newsList)
+    {
+        Toast.makeText(NewsActivity.this, "Load Recommend Complete", Toast.LENGTH_SHORT).show() ;
+        RecyclerView recommendRecyclerView = (RecyclerView)findViewById(R.id.news_recommend_recycleview) ;
+        NewsAdapter newsAdapter = new NewsAdapter(NewsActivity.this, newsList, 0) ;
+        newsAdapter.resources = getResources() ;
+        recommendRecyclerView.setLayoutManager(new LinearLayoutManager(NewsActivity.this));
+        recommendRecyclerView.setAdapter(newsAdapter);
+    }
 }

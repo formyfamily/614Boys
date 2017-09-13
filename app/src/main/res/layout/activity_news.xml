@@ -114,6 +114,31 @@
                 android:id="@+id/news_picture_recycleview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingBottom="25dp"
+                android:paddingTop="10dp"/>
+            <TextView
+                android:id="@+id/news_recommend_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="21dp"
+                android:layout_marginLeft="@dimen/title_margin"
+                android:layout_marginRight="@dimen/title_margin"
+                android:layout_marginTop="@dimen/title_margin"
+                android:layout_marginBottom="@dimen/title_margin"
+                android:textColor="@color/colorUnreaded"
+                android:textStyle="bold"
+                android:text="推荐新闻"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/divider_bg"
+                android:layout_marginBottom="@dimen/text_margin"
+                />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/news_recommend_recycleview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:paddingBottom="120dp"
                 android:paddingTop="10dp"/>
         </LinearLayout>
