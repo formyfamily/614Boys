@@ -89,8 +89,10 @@ public class NewsDetail extends News {
     public boolean setByJsonObject(JSONObject jsonObject) {
         try {
             setClassTag(jsonObject.getString("newsClassTag"));
-            setAuthor(jsonObject.getString("news_Author"));
-            setCategory(jsonObject.getString("news_Category"));
+            if (jsonObject.has("news_Author")) setAuthor(jsonObject.getString("news_Author"));
+            else setAuthor("未署名");
+            if (jsonObject.has("news_Category")) setCategory(jsonObject.getString("news_Category"));
+            else setCategory("无分类");
             String content = jsonObject.getString("news_Content");
             Pattern p = Pattern.compile("[。？！\\.\\?\\!…][\\s]+");
             Matcher m = p.matcher(content);
@@ -143,11 +145,12 @@ public class NewsDetail extends News {
             setContent(newContent);
 
             setId(jsonObject.getString("news_ID"));
-            setJournal(jsonObject.getString("news_Journal"));
-            setSource(jsonObject.getString("news_Source"));
-            String timeGet = jsonObject.getString("news_Time");
-            //timeGet = timeGet.substring(0, 4) + "-" + timeGet.substring(4, 6) + "-" + timeGet.substring(6, 8);
-            setTime(timeGet);
+            if (jsonObject.has("news_Journal")) setJournal(jsonObject.getString("news_Journal"));
+            else setJournal("匿名记者");
+            if (jsonObject.has("news_Source")) setSource(jsonObject.getString("news_Source"));
+            else setSource("火星");
+            if (jsonObject.has("news_Time")) setTime(jsonObject.getString("news_Time"));
+            else setTime("某年某月的某一天");
 
             setTitle(jsonObject.getString("news_Title"));
 
@@ -155,7 +158,8 @@ public class NewsDetail extends News {
             if (jsonObject.getString("news_Video").equals(""))
                 setVideo(null);
             else setVideo(jsonObject.getString("news_Video"));
-            String pics = jsonObject.getString("news_Pictures");
+            String pics= "";
+            if (jsonObject.has("news_Pictures")) pics = jsonObject.getString("news_Pictures");
             String[] picses = pics.split("[;\\s]");
 
             setPictures(new ArrayList<String>());
