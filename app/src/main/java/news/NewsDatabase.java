@@ -22,7 +22,6 @@ public class NewsDatabase {
     private NewsDatabase() {
     }
 
-    private String databasePath = "";
     private Activity thisActivity;
     private String splitStr = ";,;";
 
@@ -210,5 +209,56 @@ public class NewsDatabase {
                 db.insert("NLP", null, values);
             }
         }
+    }
+
+    private String classTagInt2Str(int classTagId){
+        switch(classTagId){
+            case 1:
+                return("科技");
+            case 2:
+                return("教育");
+            case 3:
+                return("军事");
+            case 4:
+                return("国内");
+            case 5:
+                return("社会");
+            case 6:
+                return("文化");
+            case 7:
+                return("汽车");
+            case 8:
+                return("国际");
+            case 9:
+                return("体育");
+            case 10:
+                return("财经");
+            case 11:
+                return("健康");
+            case 12:
+                return("娱乐");
+            default:
+                return("出错啦");
+        }
+    }
+
+    public ArrayList<News> getNewsByClassTag(int classTagId){
+        final int maxSize = 20;
+        ArrayList<News> newses = new ArrayList<News>();
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getReadableDatabase();
+        Cursor cursor;
+        if (classTagId == 0) cursor = db.rawQuery("select * from newsHistory",null);
+        else cursor = db.rawQuery("select * from newsHistory where classTag=?",new String[]{classTagInt2Str(classTagId)});
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String id = cursor.getString(cursor.getColumnIndex("id"));
+                NewsDetail newsDetail = getNewsDetailById(id);
+                if (newsDetail != null) {
+                    newses.add((News) newsDetail);
+                }
+                cursor.moveToNext();
+            }
+        }
+        return(newses);
     }
 }

@@ -80,6 +80,9 @@ public class NewsProxy {
         return(displaySize[index]);
     }
     public ArrayList<News> getDisplayNews(int classTagId) {
+        if (keywords.equals("")&&(displaySize[classTagId]==0)){   // No network connection, load offline news
+            return(NewsDatabase.getInstance().getNewsByClassTag(classTagId));
+        }
         ArrayList<News> sublist = new ArrayList<News>();
         int index = getRealIndex(classTagId);
         for (int i = 0; i < displaySize[index]; i++)
