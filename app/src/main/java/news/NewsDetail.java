@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import controller.GlobalSettings;
+import controller.TextHelper;
 
 import static controller.GlobalSettings.getNoPictureMode;
 import static controller.GlobalSettings.getRecommendRelated;
@@ -243,10 +244,10 @@ public class NewsDetail extends News {
             int count = 0;
             for (int i = 0; i < Math.min(actualRead,loadNumber); i++) {
                 News thisNews = newses.get(i);
-                if (!thisNews.getTitle().equals(currentTitle)) {
+                if (!TextHelper.sameNews(thisNews.getTitle(),currentTitle)) {
                     boolean repeat = false;
                     for (int j = 0; j < count; j++) {
-                        if (thisNews.getTitle().equals(returnList.get(j).getTitle())) {
+                        if (TextHelper.sameNews(thisNews.getTitle(),returnList.get(j).getTitle())) {
                             repeat = true;
                             break;
                         }
