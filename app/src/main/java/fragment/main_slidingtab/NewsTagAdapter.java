@@ -72,5 +72,6 @@ public class NewsTagAdapter extends FragmentPagerAdapter {
     public void update() {
         for(int i = 0; i < getCount(); i ++)
             ((NewsFragment)getItem(i)).update();
+        notifyDataSetChanged();
     }
 }

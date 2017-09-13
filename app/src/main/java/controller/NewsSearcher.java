@@ -33,8 +33,6 @@ public class NewsSearcher {
     public void setNewsTagFragment(NewsTagFragment newsTagFragment) {this.newsTagFragment = newsTagFragment ;}
     public void searchKeyWord(String keyWord) {
         NewsProxy.getInstance().setKeywords(keyWord);
-        for(int i = 0; i <= 12; i ++)
-            NewsProxy.getInstance().moreNews(i);
         newsTagFragment.update();
     }
     public void finishSearching() {

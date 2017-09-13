@@ -40,7 +40,6 @@ public class NewsTagFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main_news_tag_pageview, container, false);
         mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-
         imageButton = (ImageButton) view.findViewById(R.id.tab_set_button) ;
         imageButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -78,11 +77,14 @@ public class NewsTagFragment extends Fragment {
     {
         if(mViewPager == null)
             mViewPager = new ViewPager(mContext) ;
+        if(newsTagAdapter == null)
+            newsTagAdapter = new NewsTagAdapter(fm, mContext) ;
         mViewPager.setAdapter(newsTagAdapter);
-        if(slidingTabLayout != null)
+        if (slidingTabLayout != null)
             slidingTabLayout.setViewPager(mViewPager);
     }
 
+    public NewsTagAdapter getAdapter() {return newsTagAdapter ;}
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

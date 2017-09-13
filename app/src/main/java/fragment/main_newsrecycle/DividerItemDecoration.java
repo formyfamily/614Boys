@@ -1,6 +1,7 @@
 package fragment.main_newsrecycle;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -8,6 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import activity.R;
 
 /**
  * Created by kzf on 2017/9/6.
@@ -41,6 +44,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent) {
+        c.drawColor(parent.getResources().getColor(R.color.white));
         if (mOrientation == VERTICAL_LIST) {
             drawVertical(c, parent);
         } else {

@@ -3,6 +3,7 @@ package activity;
 import controller.NewsReciter;
 import controller.NewsSearcher;
 import fragment.main_newsrecycle.NewsAdapter;
+import fragment.main_slidingtab.MainAdapter;
 import fragment.main_slidingtab.MainTagEntity;
 import fragment.main_slidingtab.NewsNormalFragment;
 import fragment.main_slidingtab.NewsTagFragment;
@@ -14,9 +15,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
@@ -29,6 +34,7 @@ import android.widget.TextView;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.flyco.tablayout.CommonTabLayout;
+import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.iflytek.cloud.SpeechConstant;
@@ -36,25 +42,41 @@ import com.iflytek.cloud.SpeechUtility;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import fragment.main_slidingtab.NewsTagAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    boolean nightMode = false ;
-    boolean noPictureMode = false ;
+    static boolean nightMode = false ;
+    static boolean noPictureMode = false ;
+    public static Context mContext ;
+
     Toolbar toolbar ;
-    NewsTagAdapter newsTagAdapter ;
     CommonTabLayout commonTabLayout ;
-    NewsTagFragment newsTagFragment ;
-    NewsNormalFragment favouriteFragment, recommendFragment;
+    SlidingTabLayout slidingTabLayout ;
     ArrayList<Fragment> fragmentList ;
     ArrayList<CustomTabEntity> tabEntityList ;
+    NewsTagFragment newsTagFragment ;
+    NewsNormalFragment favouriteFragment, recommendFragment;
+    NewsTagAdapter newsTagAdapter ;
+    MainAdapter mainAdapter ;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        /*getSupportFragmentManager().findFragmentById(R.id.main_tab_content) ;
+        getSupportFragmentManager().putFragment(outState, "newsTagFragment", newsTagFragment );
+        getSupportFragmentManager().putFragment(outState, "favouriteFragment", favouriteFragment );
+        getSupportFragmentManager().putFragment(outState, "recommendFragment", recommendFragment );*/
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         // -- --- -- --- Some initialization
+        android.app.FragmentManager fm = getFragmentManager() ;
         NewsDatabase.getInstance().setThisActivity(MainActivity.this);
         DatabaseHelper.init(this);
         NewsDetail.setThisActivity(MainActivity.this);
@@ -63,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
         NewsReciter.getInstance().init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getSupportFragmentManager().beginTransaction();
+        mContext = MainActivity.this ;
 
         // -- --- -- --- Setup ToolBar
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
@@ -96,14 +119,18 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case MotionEvent.ACTION_UP:
                         TextView nightText = (TextView)findViewById(R.id.night_mode_text) ;
-                        nightModeBotton.setBackgroundColor(Color.rgb(255,255,255));
+                        nightModeBotton.setBackgroundColor(getResources().getColor(R.color.white));
                         if(nightMode == false){
-                            nightText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已打开夜间模式");
+                            recreate();
+                            nightText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                         }
                         else {
-                            nightText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已关闭夜间模式");
+                            recreate();
+                            nightText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
                         }
                         nightMode = !nightMode ;
                         break;
@@ -121,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case MotionEvent.ACTION_UP:
                         TextView noPictureText = (TextView)findViewById(R.id.nopicture_mode_text) ;
-                        noPictureModeBotton.setBackgroundColor(Color.rgb(255,255,255));
+                        noPictureModeBotton.setBackgroundColor(getResources().getColor(R.color.white));
                         if(noPictureMode == false){
                             noPictureText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已打开无图模式");
@@ -137,40 +164,55 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         // -- --- -- --- Setup SlidingTab
 
-        newsTagFragment = new NewsTagFragment() ;
-        NewsSearcher.getInstance().setNewsTagFragment(newsTagFragment);
+
+        if (savedInstanceState != null) {
+            List<Fragment> fragList = getSupportFragmentManager().getFragments() ;
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            for(int i = 0; i < fragList.size(); i ++)
+                fragmentTransaction.remove(fragList.get(i)) ;
+            fragmentTransaction.commit();
+        }
+        newsTagFragment = new NewsTagFragment();
         favouriteFragment = new NewsNormalFragment() ;
         recommendFragment = new NewsNormalFragment() ;
-        fragmentList = new ArrayList<Fragment>() ;
-        fragmentList.add(newsTagFragment) ;
-        fragmentList.add(favouriteFragment) ;
-        fragmentList.add(recommendFragment) ;
-
         newsTagFragment.setContext(MainActivity.this) ;
         favouriteFragment.setContext(MainActivity.this) ;
         recommendFragment.setContext(MainActivity.this) ;
         newsTagAdapter = new NewsTagAdapter(getSupportFragmentManager(), MainActivity.this) ;
         newsTagFragment.setAdapter(newsTagAdapter);
+        newsTagFragment.update();
+        NewsSearcher.getInstance().setNewsTagFragment(newsTagFragment);
+        fragmentList = new ArrayList<Fragment>() ;
+        fragmentList.add(newsTagFragment) ;
+        fragmentList.add(favouriteFragment) ;
+        fragmentList.add(recommendFragment) ;
+
 
         tabEntityList = new ArrayList<CustomTabEntity>() ;
         tabEntityList.add(new MainTagEntity("全部新闻", 0, 0)) ;
         tabEntityList.add(new MainTagEntity("新闻推荐", 0, 0)) ;
         tabEntityList.add(new MainTagEntity("收藏夹", 0, 0)) ;
 
+        String[] mTabTitles = {"全部新闻","新闻推荐","收藏夹"} ;
         commonTabLayout = (CommonTabLayout)findViewById(R.id.main_tab_layout) ;
-        commonTabLayout.setTabData(tabEntityList, this, R.id.main_tab_content, fragmentList) ;
-        commonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
+        commonTabLayout.setTabData(tabEntityList, MainActivity.this, R.id.main_tab_content, fragmentList) ;
+        /*slidingTabLayout = (SlidingTabLayout)findViewById(R.id.main_tab_layout) ;
+        ViewPager viewPager = (ViewPager)findViewById(R.id.main_viewpager) ;
+        viewPager.setAdapter(mainAdapter);
+        slidingTabLayout.setViewPager(viewPager, mTabTitles);
+        slidingTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-                if(position == 1) favouriteFragment.update(); ;
+                if(position == 1) favouriteFragment.update();
             }
             @Override
             public void onTabReselect(int position) {
 
             }
-        });
+        });*/
     }
 
     @Override
@@ -232,5 +274,4 @@ public class MainActivity extends AppCompatActivity {
         TagActivity.newsTagAdapter = newsTagAdapter;
         startActivityForResult(intent, 0);
     }
-
 }

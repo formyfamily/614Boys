@@ -14,10 +14,12 @@ public class NewsReader {
     private static NewsReader newsReader = new NewsReader() ;
 
     public static NewsReader getInstance() {return newsReader ;}
-    public void readNews(final News news, final Context mContext, final NewsAdapter newsAdapter)
+    public void readNews(final News news, Context mContext, final NewsAdapter newsAdapter)
     {
         if (NewsDetail.getNewsDetailById(news.getId()) != null) {
             newsAdapter.notifyDataSetChanged();
+            if(mContext == null)
+                mContext = MainActivity.mContext ;
             ((MainActivity) mContext).createNewNewsActivity(news);
         }
     }
