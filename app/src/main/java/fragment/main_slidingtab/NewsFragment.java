@@ -3,7 +3,9 @@ package fragment.main_slidingtab;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +34,7 @@ public class NewsFragment extends Fragment {
     SlideInRightAnimationAdapter newsAdapter;
     SwipeRefreshLayout newsRefresh;
     Context mContext ;
+    String lastKeyWord = "" ;
     int lastVisibleItem = 0;
     int tagId;
 
@@ -106,7 +109,11 @@ public class NewsFragment extends Fragment {
 
     public void update() {
         if(smallAdapter == null) return ;
+        if(!newsProxy.getKeywords().equals(lastKeyWord) && !newsProxy.getKeywords().equals(""))
+            newsProxy.moreNews(tagId);
         smallAdapter.datas = newsProxy.getDisplayNews(tagId);
+        smallAdapter.mContext = mContext ;
+        lastKeyWord = newsProxy.getKeywords() ;
         smallAdapter.notifyDataSetChanged();
         lastVisibleItem = 0;
         Log.println(Log.INFO, "", "New!" + ((Integer) tagId).toString());

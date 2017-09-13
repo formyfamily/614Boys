@@ -45,6 +45,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <LinearLayout
             android:layout_width="match_parent"
@@ -61,7 +62,7 @@
                 android:layout_marginRight="@dimen/title_margin"
                 android:layout_marginTop="@dimen/title_margin"
                 android:layout_marginBottom="7dp"
-                android:textColor="#616161"
+                android:textColor="@color/colorUnreaded"
                 android:textStyle="bold"
                 android:text="Title"/>
             <TextView
@@ -100,7 +101,7 @@
                 android:layout_marginRight="@dimen/title_margin"
                 android:layout_marginTop="@dimen/title_margin"
                 android:layout_marginBottom="@dimen/title_margin"
-                android:textColor="#616161"
+                android:textColor="@color/colorUnreaded"
                 android:textStyle="bold"
                 android:text="相关图片"/>
             <ImageView
@@ -129,7 +130,7 @@
         fab:menu_colorNormal="@color/colorPrimaryDark"
         fab:menu_colorPressed="@color/colorPrimaryLight"
         fab:menu_colorRipple="#99FFFFFF"
-        fab:menu_labels_textColor="#ffffff"
+        fab:menu_labels_textColor="@color/white"
         fab:menu_labels_colorNormal="@color/colorPrimary"
         fab:menu_labels_colorPressed="@color/colorPrimaryLight"
         fab:menu_labels_colorRipple="#66FFFFFF"
