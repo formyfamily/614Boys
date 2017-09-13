@@ -2,6 +2,8 @@ package controller;
 
 import android.content.Context;
 
+import com.bigkoo.svprogresshud.SVProgressHUD;
+
 import activity.MainActivity;
 import fragment.main_newsrecycle.NewsAdapter;
 import news.* ;
@@ -21,6 +23,11 @@ public class NewsReader {
             if(mContext == null)
                 mContext = MainActivity.mContext ;
             ((MainActivity) mContext).createNewNewsActivity(news);
+        }
+        else
+        {
+
+            new SVProgressHUD(mContext).showInfoWithStatus("该新闻无法打开");
         }
     }
 }

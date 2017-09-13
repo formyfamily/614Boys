@@ -33,7 +33,8 @@ public class NewsFavourite {
         }
     }
 
-    public void getAllFavoriteNews(){
+    public ArrayList<News> getAllFavoriteNews(){
         ArrayList<News> newses = NewsDatabase.getInstance().getAllFavorite();
+        return newses ;
     }
 }

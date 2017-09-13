@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar ;
     CommonTabLayout commonTabLayout ;
-    SlidingTabLayout slidingTabLayout ;
     ArrayList<Fragment> fragmentList ;
     ArrayList<CustomTabEntity> tabEntityList ;
     NewsTagFragment newsTagFragment ;
@@ -151,10 +150,12 @@ public class MainActivity extends AppCompatActivity {
                         noPictureModeBotton.setBackgroundColor(getResources().getColor(R.color.white));
                         if(noPictureMode == false){
                             noPictureText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                            News.setNoPictureMode(true);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已打开无图模式");
                         }
                         else {
                             noPictureText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
+                            News.setNoPictureMode(false);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已关闭无图模式");
                         }
                         noPictureMode = !noPictureMode ;
@@ -176,9 +177,11 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.commit();
         }
         newsTagFragment = new NewsTagFragment();
-        favouriteFragment = new NewsNormalFragment() ;
         recommendFragment = new NewsNormalFragment() ;
+        favouriteFragment = new NewsNormalFragment() ;
         newsTagFragment.setContext(MainActivity.this) ;
+        recommendFragment.setType(1) ;
+        favouriteFragment.setType(2) ;
         favouriteFragment.setContext(MainActivity.this) ;
         recommendFragment.setContext(MainActivity.this) ;
         newsTagAdapter = new NewsTagAdapter(getSupportFragmentManager(), MainActivity.this) ;
@@ -187,8 +190,8 @@ public class MainActivity extends AppCompatActivity {
         NewsSearcher.getInstance().setNewsTagFragment(newsTagFragment);
         fragmentList = new ArrayList<Fragment>() ;
         fragmentList.add(newsTagFragment) ;
-        fragmentList.add(favouriteFragment) ;
         fragmentList.add(recommendFragment) ;
+        fragmentList.add(favouriteFragment) ;
 
 
         tabEntityList = new ArrayList<CustomTabEntity>() ;
@@ -199,20 +202,17 @@ public class MainActivity extends AppCompatActivity {
         String[] mTabTitles = {"全部新闻","新闻推荐","收藏夹"} ;
         commonTabLayout = (CommonTabLayout)findViewById(R.id.main_tab_layout) ;
         commonTabLayout.setTabData(tabEntityList, MainActivity.this, R.id.main_tab_content, fragmentList) ;
-        /*slidingTabLayout = (SlidingTabLayout)findViewById(R.id.main_tab_layout) ;
-        ViewPager viewPager = (ViewPager)findViewById(R.id.main_viewpager) ;
-        viewPager.setAdapter(mainAdapter);
-        slidingTabLayout.setViewPager(viewPager, mTabTitles);
-        slidingTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
+        commonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-                if(position == 1) favouriteFragment.update();
+                if(position == 1) recommendFragment.update();
+                if(position == 2) favouriteFragment.update() ;
             }
             @Override
             public void onTabReselect(int position) {
 
             }
-        });*/
+        });
     }
 
     @Override
