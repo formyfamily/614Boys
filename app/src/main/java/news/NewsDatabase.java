@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -260,5 +261,44 @@ public class NewsDatabase {
             }
         }
         return(newses);
+    }
+
+    public void addDislike(String title){
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
+        Cursor cursor = db.query("dislike",new String[]{"title"},"title=?",new String[]{title},null,null,null);
+        if (cursor.moveToNext()){
+            return;
+        }
+        else{
+            ContentValues values = new ContentValues();
+            values.put("title",title);
+            db.insert("dislike",null,values);
+        }
+    }
+
+    public void removeDislike(String title){
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getWritableDatabase();
+        Cursor cursor = db.query("dislike",new String[]{"title"},"title=?",new String[]{title},null,null,null);
+        if (cursor.moveToNext()){
+            db.delete("dislike","title=?",new String[]{title});
+            return;
+        }
+        else{
+            return;
+        }
+    }
+
+    public ArrayList<String> getAllDislike(){
+        SQLiteDatabase db = DatabaseHelper.getDbHelper().getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from dislike",null);
+        ArrayList<String> dislikeList = new ArrayList<String>();
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String title = cursor.getString(cursor.getColumnIndex("title"));
+                if (!title.equals("")) dislikeList.add(title);
+                cursor.moveToNext();
+            }
+        }
+        return(dislikeList);
     }
 }

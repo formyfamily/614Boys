@@ -11,9 +11,11 @@ import java.util.Map;
 
 public class TextHelper {                              // FROM https://my.oschina.net/BreathL/blog/42477
     private static final double threshold = 0.9;
+    private static final double similarThreshold = 0.01;
     public static boolean sameNews(String s, String t) {// Input: two titles
         return(getSimilarity(s,t)>threshold);
     }
+    public static boolean similarNews(String s,String t) { return(getSimilarity(s,t)>similarThreshold);}
     private TextHelper(){}
     private static double getSimilarity(String doc1, String doc2) {
         if (doc1 != null && doc1.trim().length() > 0 && doc2 != null
