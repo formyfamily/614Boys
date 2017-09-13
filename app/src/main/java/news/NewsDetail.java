@@ -3,24 +3,26 @@ package news;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.Settings;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import controller.GlobalSettings;
+import controller.TextHelper;
+
+import static controller.GlobalSettings.getNoPictureMode;
+import static controller.GlobalSettings.getRecommendRelated;
 
 /**
  * Created by Administrator on 2017/9/7.
@@ -224,6 +226,45 @@ public class NewsDetail extends News {
             return  pictureList;
         }catch (Exception e) {
             return pictureList;
+        }
+    }
+
+    public ArrayList<News> getRelatedNews() {
+        if (getRecommendRelated() == false) return(new ArrayList<News>());
+        ArrayList<News> newses = new ArrayList<News>();
+        ArrayList<News> returnList = new ArrayList<News>();
+        final int loadNumber = 10;
+        final int returnNumber = 3;
+        InternetQueryThread thread = new InternetQueryThread(getTitle().replaceAll("[^\\u4e00-\\u9fa5_a-zA-Z0-9]",""),getClassTagId(),1,newses,loadNumber);
+        try {
+            thread.start();
+            thread.join();
+            int actualRead = thread.getActualRead();
+            String currentTitle = getTitle();
+            int count = 0;
+            for (int i = 0; i < Math.min(actualRead,loadNumber); i++) {
+                News thisNews = newses.get(i);
+                if (!TextHelper.sameNews(thisNews.getTitle(),currentTitle)) {
+                    boolean repeat = false;
+                    for (int j = 0; j < count; j++) {
+                        if (TextHelper.sameNews(thisNews.getTitle(),returnList.get(j).getTitle())) {
+                            repeat = true;
+                            break;
+                        }
+                    }
+                    if (repeat == false) {
+                        count++;
+                        returnList.add(thisNews);
+                    }
+                }
+                if (count == returnNumber) break;
+            }
+        }
+        catch(Exception e) {
+
+        }
+        finally {
+            return (returnList);
         }
     }
 }

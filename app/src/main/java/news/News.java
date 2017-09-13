@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class News implements Serializable {
-    private static boolean noPictureMode = false;
+
     private String langType;
     private String classTag;
     private int classTagId;
@@ -165,11 +165,5 @@ public class News implements Serializable {
         } catch (Exception e) {
             return NewsProxy.getInstance().notFoundBitmap;
         }
-    }
-    public static void setNoPictureMode(boolean noPictureMode_){
-        noPictureMode = noPictureMode_;
-    }
-    public static boolean getNoPictureMode(){
-        return(noPictureMode);
     }
 }
