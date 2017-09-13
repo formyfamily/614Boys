@@ -39,6 +39,7 @@ public class NewsActivity extends AppCompatActivity {
     com.github.clans.fab.FloatingActionButton favouriteButton ;
     com.github.clans.fab.FloatingActionButton reciteButton ;
     com.github.clans.fab.FloatingActionButton shareButton ;
+    com.github.clans.fab.FloatingActionButton dislikeButton ;
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +113,21 @@ public class NewsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)  {
                 NewsSharer.getInstance().shareNews(NewsActivity.this, newsDetail) ;
+            }
+        });
+
+        dislikeButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_dislike) ;
+        dislikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)  {
+                if (dislikeButton.getLabelText().equals("不感兴趣")) {
+                    dislikeButton.setLabelText("恢复兴趣");
+                    DislikeList.getInstance().addDislike(newsDetail.getTitle());
+                }
+                else{
+                    dislikeButton.setLabelText("不感兴趣");
+                    DislikeList.getInstance().removeDislike(newsDetail.getTitle());
+                }
             }
         });
     }

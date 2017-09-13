@@ -60,10 +60,14 @@ public class InternetQueryThread extends Thread {
             String json = out.toString();
             JSONObject jsonObject1 = new JSONObject(json);
             JSONArray jsonArray = jsonObject1.getJSONArray("list");
+            DislikeList dislikeList = DislikeList.getInstance();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                currentList.add(new News(jsonObject));
-                actualRead ++;
+                News thisNews = new News(jsonObject);
+                if (!dislikeList.checkDislike(thisNews.getTitle())) {
+                    currentList.add(new News(jsonObject));
+                    actualRead++;
+                }
             }
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
