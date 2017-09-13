@@ -12,16 +12,18 @@ import java.util.HashMap;
 public class NewsNLP {
     private HashMap<String,Double> scores = new HashMap<String,Double>();
 
-    public void setByJsonObject(JSONObject jsonObject) {
+    public boolean setByJsonObject(JSONObject jsonObject) {
         try {
             JSONArray jsonArray = jsonObject.getJSONArray("Keywords");
             for (int i=0;i<jsonArray.length();i++) {
                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                 scores.put(jsonObject1.getString("word"),jsonObject1.getDouble("score"));
             }
+            return(true);
         }
         catch (Exception e) {
-
+            e.printStackTrace();
+            return(false);
         }
     }
 
