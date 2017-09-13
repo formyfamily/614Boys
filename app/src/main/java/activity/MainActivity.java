@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         NewsReciter.getInstance().init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportFragmentManager().beginTransaction();
         mContext = MainActivity.this ;
 
         // -- --- -- --- Setup ToolBar
@@ -105,6 +104,11 @@ public class MainActivity extends AppCompatActivity {
 
         // -- --- -- --- Setup Menu Botton Click Events
         final LinearLayout nightModeBotton = (LinearLayout)findViewById(R.id.night_mode_button) ;
+        TextView nightText = (TextView)findViewById(R.id.night_mode_text) ;
+        if(GlobalSettings.getNightMode() == true)
+            nightText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        else
+            nightText.setTextColor(getResources().getColor(R.color.text_color));
         nightModeBotton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -119,15 +123,15 @@ public class MainActivity extends AppCompatActivity {
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已打开夜间模式");
                             GlobalSettings.setNightMode(true) ;
-                            recreate();
                             nightText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                            recreate();
                         }
                         else {
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已关闭夜间模式");
                             GlobalSettings.setNightMode(false) ;
+                            nightText.setTextColor(getResources().getColor(R.color.text_color));
                             recreate();
-                            nightText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
                         }
                         break;
                 }
@@ -135,6 +139,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         final LinearLayout noPictureModeBotton = (LinearLayout)findViewById(R.id.nopicture_mode_button) ;
+        TextView noPictureText = (TextView)findViewById(R.id.nopicture_mode_text) ;
+        if(GlobalSettings.getNoPictureMode() == true)
+            noPictureText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        else
+            noPictureText.setTextColor(getResources().getColor(R.color.text_color));
         noPictureModeBotton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -151,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已打开无图模式");
                         }
                         else {
-                            noPictureText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
+                            noPictureText.setTextColor(getResources().getColor(R.color.text_color));
                             GlobalSettings.setNoPictureMode(false);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已关闭无图模式");
                         }
@@ -180,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
         favouriteFragment.setType(2) ;
         favouriteFragment.setContext(MainActivity.this) ;
         recommendFragment.setContext(MainActivity.this) ;
-        newsTagAdapter = new NewsTagAdapter(getSupportFragmentManager(), MainActivity.this) ;
+        //newsTagAdapter = NewsTagAdapter.getInstance(getSupportFragmentManager(), MainActivity.this) ;
+        newsTagAdapter = NewsTagAdapter.resetInstance(getSupportFragmentManager(), MainActivity.this) ;
         newsTagFragment.setAdapter(newsTagAdapter);
         newsTagFragment.update();
         NewsSearcher.getInstance().setNewsTagFragment(newsTagFragment);
@@ -260,12 +270,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0 && resultCode == 0) {
-            newsTagAdapter = new NewsTagAdapter(getSupportFragmentManager(), MainActivity.this) ;
             newsTagAdapter.resetTag();
             boolean tagChecked[] = data.getBooleanArrayExtra("tag_check") ;
             for(int i = 0; i < 12; i ++)
                 if(tagChecked[i]) newsTagAdapter.addTag(i + 1);
-            newsTagAdapter.notifyDataSetChanged();
+
             newsTagFragment.setAdapter(newsTagAdapter);
             newsTagFragment.update();
       }

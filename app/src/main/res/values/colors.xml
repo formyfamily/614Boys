@@ -15,9 +15,13 @@
     <color name="colorShareDark">#43a047</color>
     <color name="colorShareLight">#a3e9a4</color>
 
-    <color name="colorVoice">#ef5350</color>
-    <color name="colorVoiceDark">#e53935</color>
-    <color name="colorVoiceLight">#ef9a9a</color>
+    <color name="colorDislike">#ef5350</color>
+    <color name="colorDislikeDark">#e53935</color>
+    <color name="colorDislikeLight">#ef9a9a</color>
+
+    <color name="colorVoice">#607d8b</color>
+    <color name="colorVoiceDark">#455a64</color>
+    <color name="colorVoiceLight">#cfd8dc</color>
 
     <color name="add_bg_color">#FF2ECC71</color>
     <color name="add_selected_color">#51C332</color>

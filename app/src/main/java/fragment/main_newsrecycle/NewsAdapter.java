@@ -12,11 +12,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import activity.R;
+import controller.GlobalSettings;
 import controller.NewsReader;
 import news.News;
+
+import static android.support.v4.view.PagerAdapter.POSITION_NONE;
 
 /**
  * Created by kzf on 2017/9/6.
@@ -75,6 +80,13 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ivh.news = datas.get(position) ;
             ivh.newAdapter = this ;
             ivh.mTextView.setText(ivh.news.getTitle());
+            if(ivh.news.getPictures().size() > 0 && GlobalSettings.getNoPictureMode() == false)
+                Picasso.with(mContext).load(ivh.news.getPictures().get(0)).into(ivh.mImageView);
+            else
+            {
+                ivh.mImageView.setImageDrawable(resources.getDrawable(R.mipmap.ic_picture_not_found));
+            }
+
            // ivh.mImageView.setImageBitmap(ivh.news.getFirstPicture());
             String dateString = ivh.news.getTime() ;
             try {

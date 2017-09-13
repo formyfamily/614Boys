@@ -6,6 +6,7 @@ import controller.NewsFavourite;
 import controller.NewsReciter;
 import controller.NewsSharer;
 import controller.NewsRecommender;
+import controller.newsActivityLoader.*;
 import news.* ;
 
 import android.app.LoaderManager;
@@ -33,112 +34,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.svprogresshud.SVProgressHUD;
+
 import java.util.ArrayList;
 
 /**
  * Created by kzf on 2017/9/6.
  */
 
-class NewsDetailLoader extends AsyncTaskLoader<NewsDetail> {
-    CancellationSignal mCancellationSignal ;
-    private NewsDetail mNewsDetail ;
-    Context mContext ;
-    String newsId ;
-
-    public NewsDetailLoader(Context context) {super(context); mContext = context ;}
-
-    @Override
-    public void onStartLoading() {
-        super.onStartLoading();
-        forceLoad();
-    }
-    @Override
-    public NewsDetail loadInBackground() {
-        //if(isLoadInBackgroundCanceled())
-        //    throw new OperationCanceledException();
-        if(mNewsDetail == null)
-            mNewsDetail = NewsDetail.getNewsDetailById(newsId) ;
-        return mNewsDetail ;
-    }
-}
-class NewsRecommendLoader extends AsyncTaskLoader<ArrayList<News>> {
-    CancellationSignal mCancellationSignal ;
-    private ArrayList<News> recommendNews ;
-    Context mContext ;
-    News mNews ;
-
-    public NewsRecommendLoader(Context context, News news) {
-        super(context);
-        mContext = context ;
-        mNews = news ;
-    }
-
-    @Override
-    public void onStartLoading() {
-        super.onStartLoading();
-        forceLoad();
-    }
-    @Override
-    public ArrayList<News> loadInBackground() {
-        //if(isLoadInBackgroundCanceled())
-        //    throw new OperationCanceledException();
-        if(recommendNews == null)
-            recommendNews = mNews.getRelatedNews() ;
-        return recommendNews ;
-    }
-}
-
-class NewsDetailLoaderCallBack implements LoaderManager.LoaderCallbacks<NewsDetail> {
-    Context mContext ;
-
-    public NewsDetailLoaderCallBack(Context context)
-    {
-        super() ;
-        mContext = context ;
-    }
-    @Override
-    public Loader<NewsDetail> onCreateLoader(int id, Bundle args) {
-        NewsDetailLoader newsDetailLoader = new NewsDetailLoader(mContext) ;
-        newsDetailLoader.newsId = args.getString("newsId") ;
-        return newsDetailLoader ;
-    }
-    @Override
-    public void onLoadFinished(Loader<NewsDetail> loader, NewsDetail data)
-    {
-        ((NewsActivity)mContext).onNewsDetailLoadingFinished(data);
-    }
-    @Override
-    public void onLoaderReset(Loader<NewsDetail> loader)
-    {
-    }
-
-}
-class NewsRecommendLoadingCallback implements LoaderManager.LoaderCallbacks< ArrayList<News> > {
-    Context mContext ;
-    News mNews ;
-
-    public NewsRecommendLoadingCallback(Context context, News news)
-    {
-        super() ;
-        mNews = news ;
-        mContext = context ;
-    }
-    @Override
-    public Loader<ArrayList<News>> onCreateLoader(int id, Bundle args) {
-        NewsRecommendLoader newsRecommendLoader = new NewsRecommendLoader(mContext, mNews) ;
-        return newsRecommendLoader ;
-    }
-    @Override
-    public void onLoadFinished(Loader<ArrayList<News>> loader, ArrayList<News> data)
-    {
-        ((NewsActivity)mContext).onNewsRecommendLoadingFinished(data);
-    }
-    @Override
-    public void onLoaderReset(Loader<ArrayList<News>> loader)
-    {
-    }
-
-}
 
 public class NewsActivity extends AppCompatActivity   {
 
@@ -184,13 +87,9 @@ public class NewsActivity extends AppCompatActivity   {
     {
         if(!is_favourite) {
             favouriteButton.setLabelText("收藏新闻");
-            favouriteButton.setColorNormal(getResources().getColor(R.color.colorFavourite));
-            favouriteButton.setColorPressed(getResources().getColor(R.color.colorFavoriteLight));
         }
         else {
             favouriteButton.setLabelText("取消收藏");
-            favouriteButton.setColorNormal(getResources().getColor(R.color.colorFavourite));
-            favouriteButton.setColorPressed(getResources().getColor(R.color.colorFavoriteLight));
         }
     }
 
@@ -214,11 +113,18 @@ public class NewsActivity extends AppCompatActivity   {
         textView.setLayoutParams(layoutParams);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setClickable(true);
+        TextView journalistView = (TextView)findViewById(R.id.news_journalist) ;
+        journalistView.setText(newsDetail.getJournal());
 
 
         pictureListView = (RecyclerView)findViewById(R.id.news_picture_recycleview) ;
         pictureListView.setLayoutManager(new LinearLayoutManager(this)) ;
         newsImageAdapter = new NewsImageAdapter(NewsActivity.this, newsDetail) ;
+        if(newsImageAdapter.getItemCount() == 0)
+        {
+            ((TextView)findViewById(R.id.news_image_title)).setVisibility(View.GONE);
+            ((ImageView)findViewById(R.id.news_image_divider)).setVisibility(View.GONE);
+        }
         pictureListView.setAdapter(newsImageAdapter);
 
         favouriteButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_favourite) ;
@@ -256,15 +162,21 @@ public class NewsActivity extends AppCompatActivity   {
         });
 
         dislikeButton = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab_dislike) ;
+        if(DislikeList.getInstance().checkDislike(newsDetail.getTitle()))
+            dislikeButton.setLabelText("恢复兴趣");
+        else
+            dislikeButton.setLabelText("不感兴趣");
         dislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)  {
                 if (dislikeButton.getLabelText().equals("不感兴趣")) {
                     dislikeButton.setLabelText("恢复兴趣");
+                    new SVProgressHUD(NewsActivity.this).showInfoWithStatus("已屏蔽此条新闻");
                     DislikeList.getInstance().addDislike(newsDetail.getTitle());
                 }
                 else{
                     dislikeButton.setLabelText("不感兴趣");
+                    new SVProgressHUD(NewsActivity.this).showInfoWithStatus("已恢复此条新闻");
                     DislikeList.getInstance().removeDislike(newsDetail.getTitle());
                 }
             }
@@ -275,7 +187,7 @@ public class NewsActivity extends AppCompatActivity   {
     {
         Toast.makeText(NewsActivity.this, "Load Recommend Complete", Toast.LENGTH_SHORT).show() ;
         RecyclerView recommendRecyclerView = (RecyclerView)findViewById(R.id.news_recommend_recycleview) ;
-        NewsAdapter newsAdapter = new NewsAdapter(NewsActivity.this, newsList, 0) ;
+        NewsAdapter newsAdapter = new NewsAdapter(getParent(), newsList, 0) ;
         newsAdapter.resources = getResources() ;
         recommendRecyclerView.setLayoutManager(new LinearLayoutManager(NewsActivity.this));
         recommendRecyclerView.setAdapter(newsAdapter);

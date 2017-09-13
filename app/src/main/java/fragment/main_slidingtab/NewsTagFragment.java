@@ -78,7 +78,7 @@ public class NewsTagFragment extends Fragment {
         if(mViewPager == null)
             mViewPager = new ViewPager(mContext) ;
         if(newsTagAdapter == null)
-            newsTagAdapter = new NewsTagAdapter(fm, mContext) ;
+            newsTagAdapter = NewsTagAdapter.getInstance(fm, mContext) ;
         mViewPager.setAdapter(newsTagAdapter);
         if (slidingTabLayout != null)
             slidingTabLayout.setViewPager(mViewPager);

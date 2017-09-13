@@ -92,6 +92,15 @@
                 android:paddingBottom="25dp"/>
 
             <TextView
+                android:id="@+id/news_journalist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:textSize="15dp"
+                android:paddingBottom="25dp"/>
+
+            <TextView
                 android:id="@+id/news_image_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,6 +114,7 @@
                 android:textStyle="bold"
                 android:text="相关图片"/>
             <ImageView
+                android:id="@+id/news_image_divider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:src="@drawable/divider_bg"
@@ -124,16 +134,15 @@
                 android:textSize="21dp"
                 android:layout_marginLeft="@dimen/title_margin"
                 android:layout_marginRight="@dimen/title_margin"
-                android:layout_marginTop="@dimen/title_margin"
+                android:layout_marginTop="50dp"
                 android:layout_marginBottom="@dimen/title_margin"
-                android:textColor="@color/colorUnreaded"
                 android:textStyle="bold"
-                android:text="推荐新闻"/>
+                android:textColor="@color/colorUnreaded"
+                android:text="你可能对下列新闻感兴趣..."/>
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:src="@drawable/divider_bg"
-                android:layout_marginBottom="@dimen/text_margin"
                 />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/news_recommend_recycleview"
@@ -155,7 +164,7 @@
         fab:menu_colorNormal="@color/colorPrimaryDark"
         fab:menu_colorPressed="@color/colorPrimaryLight"
         fab:menu_colorRipple="#99FFFFFF"
-        fab:menu_labels_textColor="@color/white"
+        fab:menu_labels_textColor="#FFFFFF"
         fab:menu_labels_colorNormal="@color/colorPrimary"
         fab:menu_labels_colorPressed="@color/colorPrimaryLight"
         fab:menu_labels_colorRipple="#66FFFFFF"
@@ -167,15 +176,15 @@
         fab:menu_backgroundColor="@android:color/transparent">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_voice"
+            android:id="@+id/fab_dislike"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/sym_action_chat"
-            app:fab_colorNormal="@color/colorVoice"
-            app:fab_colorPressed="@color/colorVoiceLight"
+            android:src="@android:drawable/stat_notify_error"
+            app:fab_colorNormal="@color/colorDislike"
+            app:fab_colorPressed="@color/colorDislikeLight"
             app:fab_colorRipple="#99FFFFFF"
             app:fab_size="mini"
-            fab:fab_label="语音播放"/>
+            fab:fab_label="不感兴趣"/>
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_share"
             android:layout_width="wrap_content"
@@ -197,16 +206,15 @@
             app:fab_size="mini"
             fab:fab_label="收藏新闻"/>
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_dislike"
+            android:id="@+id/fab_voice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/star_off"
-            app:fab_colorNormal="@color/colorFavourite"
-            app:fab_colorPressed="@color/colorFavoriteLight"
+            android:src="@android:drawable/sym_action_chat"
+            app:fab_colorNormal="@color/colorVoice"
+            app:fab_colorPressed="@color/colorVoiceLight"
             app:fab_colorRipple="#99FFFFFF"
             app:fab_size="mini"
-            fab:fab_label="不感兴趣"/>
-
+            fab:fab_label="语音播放"/>
     </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

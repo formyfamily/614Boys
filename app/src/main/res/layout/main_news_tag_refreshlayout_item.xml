@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="@color/white"
-    android:layout_height="80dp" >
+    android:layout_height="95dp" >
 
 
     <LinearLayout
@@ -13,14 +13,17 @@
         android:clickable="true">
         <ImageView
             android:id="@+id/item_image"
-            android:layout_height="70dp"
-            android:layout_width="70dp"
-            android:layout_margin="10dp"
+            android:scaleType="centerCrop"
+            android:layout_height="75dp"
+            android:layout_width="75dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/colorReaded"
             android:layout_gravity="center_vertical"
             />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
             android:layout_weight="0.3"
             android:orientation="vertical">
             <TextView
@@ -30,7 +33,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="0.3"
-                android:paddingTop="8dp"
+                android:paddingTop="12dp"
                 android:paddingLeft="8dp"
                 android:gravity="top|left" />
             <TextView
@@ -41,6 +44,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="0.5"
                 android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
                 android:maxLines="1"
                 android:gravity="center_vertical|left"
                 android:text="2017年12月31日"/>
