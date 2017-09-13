@@ -13,6 +13,14 @@ public class GlobalSettings {
         return(noPictureMode);
     }
 
+    private static boolean nightMode = false;
+    public static void setNightMode(boolean nightMode_){
+        nightMode = nightMode_;
+    }
+    public static boolean getNightMode(){
+        return(nightMode);
+    }
+
     private static boolean imageSearch = true;
     public static boolean getImageSearch(){
         return(imageSearch);

@@ -1,5 +1,6 @@
 package activity;
 
+import controller.GlobalSettings;
 import controller.NewsReciter;
 import controller.NewsSearcher;
 import fragment.main_newsrecycle.NewsAdapter;
@@ -48,8 +49,6 @@ import fragment.main_slidingtab.NewsTagAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    static boolean nightMode = false ;
-    static boolean noPictureMode = false ;
     public static Context mContext ;
 
     Toolbar toolbar ;
@@ -64,10 +63,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        /*getSupportFragmentManager().findFragmentById(R.id.main_tab_content) ;
-        getSupportFragmentManager().putFragment(outState, "newsTagFragment", newsTagFragment );
-        getSupportFragmentManager().putFragment(outState, "favouriteFragment", favouriteFragment );
-        getSupportFragmentManager().putFragment(outState, "recommendFragment", recommendFragment );*/
     }
 
     @Override
@@ -119,19 +114,20 @@ public class MainActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                         TextView nightText = (TextView)findViewById(R.id.night_mode_text) ;
                         nightModeBotton.setBackgroundColor(getResources().getColor(R.color.white));
-                        if(nightMode == false){
+                        if(GlobalSettings.getNightMode() == false){
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已打开夜间模式");
+                            GlobalSettings.setNightMode(true) ;
                             recreate();
                             nightText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                         }
                         else {
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已关闭夜间模式");
+                            GlobalSettings.setNightMode(false) ;
                             recreate();
                             nightText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
                         }
-                        nightMode = !nightMode ;
                         break;
                 }
                 return false;
@@ -148,17 +144,16 @@ public class MainActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                         TextView noPictureText = (TextView)findViewById(R.id.nopicture_mode_text) ;
                         noPictureModeBotton.setBackgroundColor(getResources().getColor(R.color.white));
-                        if(noPictureMode == false){
+                        if(GlobalSettings.getNoPictureMode() == false){
                             noPictureText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                            News.setNoPictureMode(true);
+                            GlobalSettings.setNoPictureMode(true);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已打开无图模式");
                         }
                         else {
                             noPictureText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
-                            News.setNoPictureMode(false);
+                            GlobalSettings.setNoPictureMode(false);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已关闭无图模式");
                         }
-                        noPictureMode = !noPictureMode ;
                         break;
                 }
                 return false;
