@@ -1,5 +1,6 @@
 package activity;
 
+import controller.GlobalSettings;
 import controller.NewsReciter;
 import controller.NewsSearcher;
 import fragment.main_newsrecycle.NewsAdapter;
@@ -150,12 +151,12 @@ public class MainActivity extends AppCompatActivity {
                         noPictureModeBotton.setBackgroundColor(getResources().getColor(R.color.white));
                         if(noPictureMode == false){
                             noPictureText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                            News.setNoPictureMode(true);
+                            GlobalSettings.setNoPictureMode(true);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已打开无图模式");
                         }
                         else {
                             noPictureText.setTextColor(getResources().getColor(R.color.textColor_svprogresshuddefault_msg));
-                            News.setNoPictureMode(false);
+                            GlobalSettings.setNoPictureMode(false);
                             new SVProgressHUD(MainActivity.this).showInfoWithStatus("已关闭无图模式");
                         }
                         noPictureMode = !noPictureMode ;
