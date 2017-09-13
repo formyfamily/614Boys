@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static news.News.getNoPictureMode;
+import static controller.GlobalSettings.getNoPictureMode;
 
 /**
  * Created by Administrator on 2017/9/7.

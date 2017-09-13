@@ -32,14 +32,14 @@ class InternetQueryThread extends Thread {
     private String keywords;
     private int classTagId;
     private int page;
-    private ArrayList<News>[] newsAll;
+    private ArrayList<News> currentList;
     private int perLoadNum;
 
-    public InternetQueryThread(String keywords, int classTagId, int page, ArrayList<News>[] newsAll, int perLoadNum) {
+    public InternetQueryThread(String keywords, int classTagId, int page, ArrayList<News> currentList, int perLoadNum) {
         this.keywords = keywords;
         this.classTagId = classTagId;
         this.page = page;
-        this.newsAll = newsAll;
+        this.currentList = currentList;
         this.perLoadNum = perLoadNum;
     }
 
@@ -74,9 +74,6 @@ class InternetQueryThread extends Thread {
             String json = out.toString();
             JSONObject jsonObject1 = new JSONObject(json);
             JSONArray jsonArray = jsonObject1.getJSONArray("list");
-            ArrayList<News> currentList;
-            if (keywords.equals("")) currentList = newsAll[classTagId];
-            else currentList = newsAll[classTagId + 13];                // Ugly
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                 currentList.add(new News(jsonObject));
@@ -153,7 +150,8 @@ public class NewsProxy {
 
     private synchronized int addNewsOfPage(int page_, int classTagId_) {
         System.out.println("addNewsOfPage " + page_ );
-        InternetQueryThread thread = new InternetQueryThread(keywords,classTagId_,page_,newsAll,perLoadNum);
+        int index = getRealIndex(classTagId_);
+        InternetQueryThread thread = new InternetQueryThread(keywords,classTagId_,page_,newsAll[index],perLoadNum);
         try {
             thread.start();
             thread.join();
