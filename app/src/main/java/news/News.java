@@ -4,18 +4,28 @@ package news;
  * Created by Administrator on 2017/9/5.
  */
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import controller.TextHelper;
+
+import static controller.GlobalSettings.getRecommendRelated;
+
 public class News implements Serializable {
+
     private String langType;
     private String classTag;
     private int classTagId;
@@ -28,6 +38,7 @@ public class News implements Serializable {
     private String url;
     private String video;
     private String intro;
+    private Bitmap firstPicture;
     private static HashMap<String, Integer> classTagIdMap = null;
     private void classTagIdMapInit() {
         if (classTagIdMap == null) {
@@ -46,6 +57,7 @@ public class News implements Serializable {
             classTagIdMap.put("娱乐", 12);
         }
     }
+    final public static String[] classIdTagArray = {"全部新闻", "科技", "教育", "军事", "国内", "社会", "文化", "汽车", "国际", "体育", "财经", "健康", "娱乐"} ;
     public String getLangType() {return langType;}
     public String getClassTag() {return classTag;}
     public int getClassTagId() {return classTagId;}
@@ -91,11 +103,13 @@ public class News implements Serializable {
             author = jsonObject.getString("news_Author");
             id = jsonObject.getString("news_ID");
             String pics = jsonObject.getString("news_Pictures");
-            String[] picses = pics.split(";");
+            String[] picses = pics.split("[;\\s]");
             pictures = new ArrayList<String>();
+            if (pics.equals(""))
+                picses = new String[0];
             for (String pic : picses) {
                 pictures.add(pic);
-            }// It's too complicated
+            }
             source = jsonObject.getString("news_Source");
             time = jsonObject.getString("news_Time");
             title = jsonObject.getString("news_Title");
@@ -116,10 +130,83 @@ public class News implements Serializable {
     public boolean isRead() {
         return NewsDatabase.getInstance().check(id);
     }
-    /*public boolean isFavorite() {
+    public boolean isFavorite() {
         return NewsDatabase.getInstance().isFavorite(id);
     }
     public void setFavorite(boolean isFavorite_) {
         NewsDatabase.getInstance().setFavorite(id, isFavorite_);
-    }*/
+    }
+    public Bitmap getFirstPicture() {
+        try {
+            Bitmap bitmap;
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        URL url = new URL(pictures.get(0));
+                        //打开URL对应的资源输入流
+                        InputStream is = url.openStream();
+                        Bitmap originBitmap = BitmapFactory.decodeStream(is);
+                        float width = originBitmap.getWidth();
+                        float height = originBitmap.getHeight();
+                        // 创建操作图片用的matrix对象
+                        Matrix matrix = new Matrix();
+                        // 计算宽高缩放率
+                        float scaleWidth = ((float) 100) / width;
+                        float scaleHeight = ((float) 100) / height;
+                        // 缩放图片动作
+                        matrix.postScale(scaleWidth, scaleHeight);
+                        firstPicture = Bitmap.createBitmap(originBitmap, 0, 0, (int) width,
+                                (int) height, matrix, true);
+                    } catch (Exception e) {
+                        firstPicture = NewsProxy.getInstance().notFoundBitmap;
+                    }
+                }
+            };
+            thread.start();
+            thread.join();
+            return firstPicture;
+        } catch (Exception e) {
+            return NewsProxy.getInstance().notFoundBitmap;
+        }
+    }
+
+    public ArrayList<News> getRelatedNews() {
+        if (getRecommendRelated() == false) return(new ArrayList<News>());
+        ArrayList<News> newses = new ArrayList<News>();
+        ArrayList<News> returnList = new ArrayList<News>();
+        final int loadNumber = 10;
+        final int returnNumber = 3;
+        InternetQueryThread thread = new InternetQueryThread(getTitle().replaceAll("[^\\u4e00-\\u9fa5_a-zA-Z0-9]",""),getClassTagId(),1,newses,loadNumber);
+        try {
+            thread.start();
+            thread.join();
+            int actualRead = thread.getActualRead();
+            String currentTitle = getTitle();
+            int count = 0;
+            for (int i = 0; i < Math.min(actualRead,loadNumber); i++) {
+                News thisNews = newses.get(i);
+                if (!TextHelper.sameNews(thisNews.getTitle(),currentTitle)) {
+                    boolean repeat = false;
+                    for (int j = 0; j < count; j++) {
+                        if (TextHelper.sameNews(thisNews.getTitle(),returnList.get(j).getTitle())) {
+                            repeat = true;
+                            break;
+                        }
+                    }
+                    if (repeat == false) {
+                        count++;
+                        returnList.add(thisNews);
+                    }
+                }
+                if (count == returnNumber) break;
+            }
+        }
+        catch(Exception e) {
+
+        }
+        finally {
+            return (returnList);
+        }
+    }
 }

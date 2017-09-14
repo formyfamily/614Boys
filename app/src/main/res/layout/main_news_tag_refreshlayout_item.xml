@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="95dp" >
+
+
+    <LinearLayout
+        android:id="@+id/news_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:clickable="true">
+        <ImageView
+            android:id="@+id/item_image"
+            android:scaleType="centerCrop"
+            android:layout_height="75dp"
+            android:layout_width="75dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/colorReaded"
+            android:layout_gravity="center_vertical"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="0.3"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/item_text"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.3"
+                android:paddingTop="12dp"
+                android:paddingLeft="8dp"
+                android:gravity="top|left" />
+            <TextView
+                android:id="@+id/item_info"
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.5"
+                android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
+                android:maxLines="1"
+                android:gravity="center_vertical|left"
+                android:text="2017年12月31日"/>
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/item_favourite_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom"
+            android:scaleType="centerInside"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/star">
+        </ImageView>
+    </LinearLayout>
+</FrameLayout>

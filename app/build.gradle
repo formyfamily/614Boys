@@ -17,6 +17,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi-v7a','x86_64'
+            universalApk true
+        }
+    }
+    sourceSets {
+        main {
+            //jni库的调用会到资源文件夹下libs里面找so文件
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
@@ -24,11 +38,26 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:support-v4:25.4.0'
+    compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     compile 'com.android.support:appcompat-v7:25.4.0'
     compile 'com.android.support:support-core-utils:25.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
     compile 'com.android.support:design:25.4.0'
     compile 'jp.wasabeef:recyclerview-animators:2.2.7'
     compile 'com.github.clans:fab:1.6.4'
+    compile 'com.bigkoo:svprogresshud:1.0.6'
+    compile 'com.miguelcatalan:materialsearchview:1.4.0'
     testCompile 'junit:junit:4.12'
+    compile files('libs/Msc.jar')
+    compile files('libs/ShareSDK-Wechat-Moments-3.0.2.jar')
+    compile files('libs/MobCommons-2017.0823.1556.jar')
+    compile files('libs/MobTools-2017.0823.1556.jar')
+    compile files('libs/ShareSDK-Core-3.0.2.jar')
+    compile files('libs/ShareSDK-QQ-3.0.2.jar')
+    compile files('libs/ShareSDK-SinaWeibo-3.0.2.jar')
+    compile files('libs/ShareSDK-Wechat-3.0.2.jar')
+    compile files('libs/ShareSDK-Wechat-Core-3.0.2.jar')
+    compile files('libs/ShareSDK-Wechat-Favorite-3.0.2.jar')
 }
